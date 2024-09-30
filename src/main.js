@@ -8,8 +8,8 @@ const headerElement = document.querySelector('.page-header');
 const tripInfoContainerElement = headerElement.querySelector('.trip-main');
 const FilterContainerElement = headerElement.querySelector('.trip-controls__filters');
 
-const boardContainer = document.querySelector('.trip-events');
-const boardPresenter = new Board(boardContainer);
+const boardContainerElement = document.querySelector('.trip-events');
+const boardPresenter = new Board(boardContainerElement);
 
 render(new TripInfoView(), tripInfoContainerElement, RenderPosition.AFTERBEGIN);
 render(new PointFilterView(), FilterContainerElement);
