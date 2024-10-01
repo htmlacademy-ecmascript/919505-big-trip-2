@@ -1,10 +1,10 @@
 import {render} from '../render';
-import PointSortingPanelView from '../view/point-sorting-panel';
-import PointFormView from '../view/point-form';
-import PointListView from '../view/point-list';
-import PointItemView from '../view/point-item';
+import PointSortingPanelView from '../view/point-sorting-panel-view';
+import PointFormView from '../view/point-form-view';
+import PointListView from '../view/point-list-view';
+import PointItemView from '../view/point-item-view';
 
-export default class Board {
+export default class BoardPresenter {
   sortingPanelComponent = new PointSortingPanelView();
   pointListComponent = new PointListView();
 
