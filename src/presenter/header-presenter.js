@@ -2,7 +2,7 @@ import {render} from '../render';
 import HeaderContainerView from '../view/header-container-view';
 import TripInfoWrapperView from '../view/trip-info-wrapper-view';
 import TripInfoView from '../view/trip-info-view';
-import PointSortingPanelView from '../view/point-sorting-panel-view';
+import PointFilterView from '../view/point-filter-view';
 import AddPointButtonView from '../view/add-point-button-view';
 
 export default class HeaderPresenter {
@@ -17,7 +17,7 @@ export default class HeaderPresenter {
     render(this.headerContainerView, this.headerElement);
     render(this.tripInfoWrapper, this.headerContainerView.getElement());
     render(new TripInfoView(), this.tripInfoWrapper.getElement());
-    render(new PointSortingPanelView(), this.tripInfoWrapper.getElement());
+    render(new PointFilterView(), this.tripInfoWrapper.getElement());
     render(new AddPointButtonView(), this.tripInfoWrapper.getElement());
   }
 }
