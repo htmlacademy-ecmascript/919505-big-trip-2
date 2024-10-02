@@ -13,5 +13,5 @@ const pointFilterPresenter = new PointFilterPresenter(pointFilterContainerElemen
 const boardPresenter = new BoardPresenter(boardContainerElement);
 
 tripInfoPresenter.init();
-boardPresenter.init();
 pointFilterPresenter.init();
+boardPresenter.init();
