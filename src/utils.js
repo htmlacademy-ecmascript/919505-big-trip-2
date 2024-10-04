@@ -1,5 +1,11 @@
 import dayjs from 'dayjs';
 
+const MillisecondQuantity = {
+  DAY: 86400000,
+  HOUR: 3600000,
+  MINUTE: 60000
+};
+
 const DateFormat = {
   DD_MM_YYYY: 'YYYY-MM-DD',
   MMM_DD: 'MMM DD',
@@ -17,7 +23,35 @@ function humanizePointHours(pointDate) {
 }
 
 function humanizeTimeDifference(dateFrom, dateTo) {
-  return dayjs(dateTo).diff(dayjs(dateFrom));
+  let difference = '';
+  const start = dayjs(dateFrom);
+  const finish = dayjs(dateTo);
+  let differenceInMilliSeconds = finish.diff(start);
+
+  let days = null;
+  let hours = null;
+
+  if (differenceInMilliSeconds > MillisecondQuantity.DAY) {
+    days = Math.floor(differenceInMilliSeconds / MillisecondQuantity.DAY);
+    differenceInMilliSeconds -= MillisecondQuantity.DAY * days;
+    difference += `${days}D `;
+  }
+
+  if (differenceInMilliSeconds >= MillisecondQuantity.HOUR || days) {
+    hours = Math.round(differenceInMilliSeconds / MillisecondQuantity.HOUR);
+    differenceInMilliSeconds -= MillisecondQuantity.HOUR * hours;
+    difference += `${hours === 0 ? '00' : hours}H `;
+  }
+
+  const minutes = Math.ceil(differenceInMilliSeconds / MillisecondQuantity.MINUTE);
+
+  if (minutes === 0 && hours) {
+    difference += '00M';
+  } else {
+    difference += `${minutes}M`;
+  }
+
+  return difference;
 }
 
 export {humanizePointDate, humanizePointHours, humanizeTimeDifference, DateFormat};
