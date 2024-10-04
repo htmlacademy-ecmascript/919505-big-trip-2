@@ -1,7 +1,7 @@
 import {createElement} from '../render';
 import {humanizePointDate, humanizePointHours, humanizeTimeDifference, DateFormat} from '../utils';
 
-function createOfferTemplate(offer) {
+function createOfferTemplate (offer) {
   const {title, price} = offer;
 
   return (

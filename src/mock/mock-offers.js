@@ -77,6 +77,29 @@ const mockOffers = [
         price: 500
       }
     ]
+  },
+
+  {
+    type: 'ship',
+    offers: [
+      {
+        id: '1',
+        title: 'Towels',
+        price: 150
+      },
+
+      {
+        id: '2',
+        title: 'Breakfast',
+        price: 800
+      },
+
+      {
+        id: '3',
+        title: 'Stylish white hat',
+        price: 5000
+      }
+    ]
   }
 ];
 

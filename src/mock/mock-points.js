@@ -1,7 +1,7 @@
 const mockPoints = [
   {
     id: '1',
-    type: 'flight',
+    type: 'ship',
     basePrice: 1100,
     dateFrom: '2024-08-11T12:55:00.845Z',
     dateTo: '2024-08-11T18:43:00.375Z',
@@ -20,7 +20,7 @@ const mockPoints = [
     basePrice: 1100,
     dateFrom: '2024-07-08T12:55:00.845Z',
     dateTo: '2024-07-08T13:22:00.375Z',
-    destination: '1',
+    destination: '2',
     isFavorite: false,
     offers: [
       '1',
@@ -34,7 +34,7 @@ const mockPoints = [
     basePrice: 5000,
     dateFrom: '2024-10-01T14:24:00.845Z',
     dateTo: '2024-10-01T16:24:00.375Z',
-    destination: '2',
+    destination: '3',
     isFavorite: true,
     offers: [
       '1',
@@ -48,7 +48,7 @@ const mockPoints = [
     basePrice: 3000,
     dateFrom: '2024-09-16T04:20:00.845Z',
     dateTo: '2024-09-24T04:40:00.375Z',
-    destination: '3',
+    destination: '4',
     isFavorite: false,
     offers: [
       '1',

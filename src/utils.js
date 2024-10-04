@@ -7,19 +7,28 @@ const MillisecondQuantity = {
 };
 
 const DateFormat = {
-  DD_MM_YYYY: 'YYYY-MM-DD',
+  YYYY_MM_DD: 'YYYY-MM-DD',
+  YY_MM_DD: 'YY/MM/DD',
   MMM_DD: 'MMM DD',
   HH_MM: 'HH MM',
   HH: 'HH',
   MM: 'mm',
 };
 
-function humanizePointDate(pointDate, format = DateFormat.DD_MM_YYYY) {
+function humanizePointDate(pointDate, format = DateFormat.YYYY_MM_DD) {
   return pointDate ? dayjs(pointDate).format(format) : '';
 }
 
 function humanizePointHours(pointDate) {
   return pointDate ? `${dayjs(pointDate).format(DateFormat.HH)}:${dayjs(pointDate).format(DateFormat.MM)}` : '';
+}
+
+function humanizePointDateTime(pointDateTime) {
+  const humanizedDate = dayjs(pointDateTime).format(DateFormat.YY_MM_DD);
+  const humanizedHours = dayjs(pointDateTime).format(DateFormat.HH);
+  const humanizedMinutes = dayjs(pointDateTime).format(DateFormat.MM);
+
+  return `${humanizedDate}&nbsp;${humanizedHours}:${humanizedMinutes}`;
 }
 
 function humanizeTimeDifference(dateFrom, dateTo) {
@@ -65,4 +74,4 @@ function humanizeTimeDifference(dateFrom, dateTo) {
   return difference;
 }
 
-export {humanizePointDate, humanizePointHours, humanizeTimeDifference, DateFormat};
+export {humanizePointDate, humanizePointHours, humanizeTimeDifference, humanizePointDateTime, DateFormat};

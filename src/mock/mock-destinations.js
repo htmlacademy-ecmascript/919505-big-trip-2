@@ -1,12 +1,12 @@
 const mockDestinations = [
   {
     id: '1',
-    name: 'Geneva',
-    description: 'Chamonix, is a beautiful city, a true asian pearl, with crowded streets.',
+    name: 'Paris',
+    description: 'Paris, is a beautiful city, a true asian pearl, with crowded streets.',
     pictures: [
       {
-        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
-        description: 'Chamonix parliament building'
+        src: 'https://loremflickr.com/248/152?random=1241522',
+        description: 'Paris parliament building'
       }
     ]
   },
@@ -17,7 +17,7 @@ const mockDestinations = [
     description: 'Chamonix, is a beautiful city, a true asian pearl, with crowded streets.',
     pictures: [
       {
-        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
+        src: 'https://loremflickr.com/248/152?random=3265236',
         description: 'Chamonix parliament building'
       }
     ]
@@ -29,7 +29,7 @@ const mockDestinations = [
     description: 'London is the capital of Great Britain.',
     pictures: [
       {
-        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
+        src: 'https://loremflickr.com/248/152?random=158807',
         description: 'A photo of London'
       }
     ]
@@ -41,7 +41,7 @@ const mockDestinations = [
     description: 'Berlin is the capital of Germany.',
     pictures: [
       {
-        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
+        src: 'https://loremflickr.com/248/152?random=32552',
         description: 'A photo of Berlin'
       }
     ]
