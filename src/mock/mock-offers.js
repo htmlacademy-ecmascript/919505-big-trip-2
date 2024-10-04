@@ -54,6 +54,29 @@ const mockOffers = [
         price: 4000
       }
     ]
+  },
+
+  {
+    type: 'flight',
+    offers: [
+      {
+        id: '1',
+        title: 'A cup of coffe',
+        price: 100
+      },
+
+      {
+        id: '2',
+        title: 'Pillow',
+        price: 400
+      },
+
+      {
+        id: '3',
+        title: 'Blanket',
+        price: 500
+      }
+    ]
   }
 ];
 

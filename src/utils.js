@@ -30,6 +30,7 @@ function humanizeTimeDifference(dateFrom, dateTo) {
 
   let days = null;
   let hours = null;
+  let minutes = null;
 
   if (differenceInMilliSeconds > MillisecondQuantity.DAY) {
     days = Math.floor(differenceInMilliSeconds / MillisecondQuantity.DAY);
@@ -38,14 +39,24 @@ function humanizeTimeDifference(dateFrom, dateTo) {
   }
 
   if (differenceInMilliSeconds >= MillisecondQuantity.HOUR || days) {
-    hours = Math.round(differenceInMilliSeconds / MillisecondQuantity.HOUR);
+    const hoursUnRounded = differenceInMilliSeconds / MillisecondQuantity.HOUR;
+    hours = Math.floor(hoursUnRounded);
     differenceInMilliSeconds -= MillisecondQuantity.HOUR * hours;
+
+    minutes = Math.ceil(differenceInMilliSeconds / MillisecondQuantity.MINUTE);
+
+    if (minutes === 60) {
+      hours++;
+    }
+
     difference += `${hours === 0 ? '00' : hours}H `;
   }
 
-  const minutes = Math.ceil(differenceInMilliSeconds / MillisecondQuantity.MINUTE);
+  if (!minutes) {
+    minutes = Math.ceil(differenceInMilliSeconds / MillisecondQuantity.MINUTE);
+  }
 
-  if (minutes === 0 && hours) {
+  if ((minutes === 0 || minutes === 60) && hours) {
     difference += '00M';
   } else {
     difference += `${minutes}M`;
