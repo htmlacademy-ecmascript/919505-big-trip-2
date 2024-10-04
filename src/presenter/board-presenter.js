@@ -8,17 +8,20 @@ export default class BoardPresenter {
   sortingPanelComponent = new PointSortingPanelView();
   pointListComponent = new PointListView();
 
-  constructor(boardContainer) {
+  constructor({boardContainer, pointsModel}) {
     this.boardContainer = boardContainer;
+    this.pointsModel = pointsModel;
   }
 
   init() {
+    this.points = this.pointsModel.getPoints();
     render(this.sortingPanelComponent, this.boardContainer);
 
     render(this.pointListComponent, this.boardContainer);
     render(new PointFormView(), this.pointListComponent.getElement());
-    render(new PointItemView(), this.pointListComponent.getElement());
-    render(new PointItemView(), this.pointListComponent.getElement());
-    render(new PointItemView(), this.pointListComponent.getElement());
+
+    this.points.forEach((point) => {
+      render(new PointItemView({point}), this.pointListComponent.getElement());
+    });
   }
 }

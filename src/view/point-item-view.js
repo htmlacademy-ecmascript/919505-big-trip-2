@@ -1,21 +1,32 @@
 import {createElement} from '../render';
+import {humanizePointDate, humanizePointHours, humanizeTimeDifference, DateFormat} from '../utils';
 
-function createPointItemTemplate() {
+function createPointItemTemplate(point) {
+  const {type, destination, dateFrom, dateTo} = point;
+  console.log(point);
+
+  const pointFullDateFrom = humanizePointDate(dateFrom);
+  const pointFullDateTo = humanizePointDate(dateFrom);
+  const pointDate = humanizePointDate(dateFrom, DateFormat.MMM_DD);
+  const timeFrom = humanizePointHours(dateFrom);
+  const timeTo = humanizePointHours(dateTo);
+  const duration = humanizeTimeDifference(dateFrom, dateTo);
+
   return (
     `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="2019-03-18">MAR 18</time>
+        <time class="event__date" datetime="${pointFullDateFrom}">${pointDate}</time>
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">Taxi Amsterdam</h3>
+        <h3 class="event__title">${type} ${destination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+            <time class="event__start-time" datetime="${pointFullDateFrom}T${timeFrom}">${timeFrom}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+            <time class="event__end-time" datetime="${pointFullDateTo}T${timeTo}">${timeTo}</time>
           </p>
-          <p class="event__duration">30M</p>
+          <p class="event__duration">${duration}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">20</span>
@@ -43,8 +54,12 @@ function createPointItemTemplate() {
 }
 
 export default class PointItemView {
+  constructor({point}) {
+    this.point = point;
+  }
+
   getTemplate() {
-    return createPointItemTemplate();
+    return createPointItemTemplate(this.point);
   }
 
   getElement() {
