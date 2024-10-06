@@ -105,7 +105,24 @@ const mockOffers = [
   {
     type: 'restaurant',
     offers: []
-  }
+  },
+
+  {
+    type: 'check-in',
+    offers: [
+      {
+        id: '1',
+        title: 'Royal apartment',
+        price: 15000
+      },
+
+      {
+        id: '2',
+        title: 'Breakfast',
+        price: 800
+      },
+    ]
+  },
 ];
 
 export {mockOffers};

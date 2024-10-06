@@ -19,14 +19,13 @@ export default class BoardPresenter {
     this.destinations = this.pointsModel.getDestinations();
 
     render(this.sortingPanelComponent, this.boardContainer);
-
     render(this.pointListComponent, this.boardContainer);
-    render(new PointFormView({point: this.points[0], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
-    render(new PointFormView({point: this.points[1], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
-    render(new PointFormView({point: this.points[2], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
-    render(new PointFormView({point: this.points[3], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
 
-    for (let i = 4; i < this.points.length; i++) {
+    for (let i = 0; i < 5; i++) {
+      render(new PointFormView({point: this.points[i], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
+    }
+
+    for (let i = 5; i < this.points.length; i++) {
       render(new PointItemView({point: this.points[i], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
     }
   }

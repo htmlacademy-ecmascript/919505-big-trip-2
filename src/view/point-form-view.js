@@ -19,11 +19,13 @@ function createDestinationItem(destination) {
   );
 }
 
-function createOffer(offer) {
+function createOffer(offer, checkedOffers) {
   const {id, title, price} = offer;
+  const isChecked = checkedOffers.includes(offer.id) ? 'checked' : '';
+
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-${id}" type="checkbox" name="event-offer-${title}" checked>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-${id}" type="checkbox" name="event-offer-${title}" ${isChecked}>
       <label class="event__offer-label" for="event-offer-${title}-${id}">
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
@@ -40,8 +42,8 @@ function createPhotoItem(photo) {
   );
 }
 
-function createOffersSection(currentOffersObject) {
-  const offersTemplate = currentOffersObject.offers.map((offer) => createOffer(offer)).join('');
+function createOffersSection(currentOffersObject, checkedOffers) {
+  const offersTemplate = currentOffersObject.offers.map((offer) => createOffer(offer, checkedOffers)).join('');
 
   return (
     `<section class="event__section  event__section--offers">
@@ -92,13 +94,13 @@ function createDestinationSection(currentDestinationObject) {
   );
 }
 
-function createDetailsSection (currentOffersObject, currentDestinationObject) {
+function createDetailsSection (currentOffersObject, checkedOffers, currentDestinationObject) {
   let offersSectionTemplate = '';
   let destinationSectionTemplate = '';
 
   // Рендерим секцию офферов только если они есть в модели для данного destination
   if (currentOffersObject.offers.length) {
-    offersSectionTemplate = createOffersSection(currentOffersObject);
+    offersSectionTemplate = createOffersSection(currentOffersObject, checkedOffers);
   }
 
   // Рендерим секцию event__section--destination только если есть описание или картинки
@@ -131,7 +133,7 @@ function createPointFormTemplate(point, offers, destinations) {
 
   // Рендерим секцию event__details только если для выбранного destination есть офферы или описание или картинки
   if (currentOffersObject.offers.length || currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
-    detailsSectionTemplate = createDetailsSection(currentOffersObject, currentDestinationObject);
+    detailsSectionTemplate = createDetailsSection(currentOffersObject, point.offers, currentDestinationObject);
   }
 
   return (

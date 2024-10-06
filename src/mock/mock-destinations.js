@@ -59,6 +59,23 @@ const mockDestinations = [
     name: 'Zurich',
     description: '',
     pictures: []
+  },
+
+  {
+    id: '7',
+    name: 'Rome',
+    description: '',
+    pictures: [
+      {
+        src: 'https://loremflickr.com/248/152?random=43634624212',
+        description: 'A photo of Rome-1'
+      },
+
+      {
+        src: 'https://loremflickr.com/248/152?random=462806729',
+        description: 'A photo of Rome-2'
+      }
+    ]
   }
 ];
 
