@@ -11,6 +11,10 @@ function generateTitle (points, destinations) {
     return '';
   }
 
+  if (points.length === 1) {
+    return getDestinationName(destinations, points[0].destination);
+  }
+
   if (points.length > 3) {
     const firstDestinationName = getDestinationName(destinations, points[0].destination);
     const lastDestinationName = getDestinationName(destinations, points[points.length - 1].destination);
@@ -18,10 +22,12 @@ function generateTitle (points, destinations) {
     return `${firstDestinationName}-...-${lastDestinationName}`;
   }
 
-  title += getDestinationName(destinations, points[0].destination);
-
-  points.forEach((point) => {
-    title += `-${getDestinationName(destinations, point.destination)}`;
+  points.forEach((point, index) => {
+    if (index === 0) {
+      title += getDestinationName(destinations, point.destination);
+    } else {
+      title += `-${getDestinationName(destinations, point.destination)}`;
+    }
   });
 
   return title;
