@@ -100,6 +100,11 @@ const mockOffers = [
         price: 5000
       }
     ]
+  },
+
+  {
+    type: 'restaurant',
+    offers: []
   }
 ];
 

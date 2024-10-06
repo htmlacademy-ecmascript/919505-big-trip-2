@@ -40,19 +40,64 @@ function createPhotoItem (photo) {
   );
 }
 
+function createOffersSection (currentOffersObject) {
+  const offersTemplate = currentOffersObject.offers.map((offer) => createOffer(offer)).join('');
+
+  return (
+    `<section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+      <div class="event__available-offers">
+        ${offersTemplate}
+      </div>
+    </section>`
+  );
+}
+
+function createDestinationInfo(currentDestinationObject) {
+  const photosTemplate = currentDestinationObject.pictures.map((picture) => createPhotoItem(picture)).join('');
+
+  return (
+    `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${currentDestinationObject.description}</p>
+
+      <div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${photosTemplate}
+        </div>
+      </div>
+    </section>`
+  );
+}
+
 function createPointFormTemplate(point, offers, destinations) {
   const {id, type, destination, dateFrom, dateTo, basePrice} = point;
-
-  const currentDestinationObject = destinations.find((value) => value.id === destination);
-  const currentOffersObject = offers.find((value) => value.type === type);
+  let currentDestinationObject = null;
+  let destinationName = '';
+  let destinationInfoTemplate = '';
+  let offersSectionTemplate = '';
 
   const fullDateFrom = humanizePointDateTime(dateFrom);
   const fullDateTo = humanizePointDateTime(dateTo);
 
   const pointTypesItemsTemplate = POINT_TYPES.map((pointType) => createPointTypeItem(id, pointType, type)).join('');
   const destinationItemsTemplate = destinations.map((value) => createDestinationItem(value.name)).join('');
-  const offersTemplate = currentOffersObject.offers.map((offer) => createOffer(offer)).join('');
-  const photosTemplate = currentDestinationObject.pictures.map((picture) => createPhotoItem(picture)).join('');
+
+  const currentOffersObject = offers.find((value) => value.type === type);
+
+  // Рендерим секцию офферов только если они есть в модели для данного destination
+  if (currentOffersObject.offers.length) {
+    offersSectionTemplate = createOffersSection(currentOffersObject);
+  }
+
+  // Рендерим секцию destination только если он выбран
+  if (destination) {
+    currentDestinationObject = destinations.find((value) => value.id === destination);
+    destinationName = currentDestinationObject.name;
+
+    destinationInfoTemplate = createDestinationInfo(currentDestinationObject);
+  }
 
   return (
     `<li class="trip-events__item">
@@ -77,7 +122,7 @@ function createPointFormTemplate(point, offers, destinations) {
             <label class="event__label  event__type-output" for="event-destination-${id}">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${currentDestinationObject.name}" list="destination-list-${id}">
+            <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${id}">
             <datalist id="destination-list-${id}">
               ${destinationItemsTemplate}
             </datalist>
@@ -103,24 +148,8 @@ function createPointFormTemplate(point, offers, destinations) {
           <button class="event__reset-btn" type="reset">Cancel</button>
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-            <div class="event__available-offers">
-              ${offersTemplate}
-            </div>
-          </section>
-
-          <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${currentDestinationObject.description}</p>
-
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${photosTemplate}
-              </div>
-            </div>
-          </section>
+          ${offersSectionTemplate}
+          ${destinationInfoTemplate}
         </section>
       </form>
     </li>`
