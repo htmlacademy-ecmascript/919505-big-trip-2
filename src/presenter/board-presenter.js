@@ -24,8 +24,9 @@ export default class BoardPresenter {
     render(new PointFormView({point: this.points[0], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
     render(new PointFormView({point: this.points[1], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
     render(new PointFormView({point: this.points[2], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
+    render(new PointFormView({point: this.points[3], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
 
-    for (let i = 3; i < this.points.length; i++) {
+    for (let i = 4; i < this.points.length; i++) {
       render(new PointItemView({point: this.points[i], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
     }
   }

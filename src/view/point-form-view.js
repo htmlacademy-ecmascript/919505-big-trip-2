@@ -2,7 +2,7 @@ import {createElement} from '../render.js';
 import {humanizePointDateTime} from '../utils';
 import {POINT_TYPES} from '../const';
 
-function createPointTypeItem (pointId, pointType, currentPointType) {
+function createPointTypeItem(pointId, pointType, currentPointType) {
   const isChecked = pointType === currentPointType ? 'checked' : '';
   return (
     `<div class="event__type-item">
@@ -12,14 +12,14 @@ function createPointTypeItem (pointId, pointType, currentPointType) {
   );
 }
 
-function createDestinationItem (destination) {
+function createDestinationItem(destination) {
   return (
     `<option value=${destination}>
      </option>`
   );
 }
 
-function createOffer (offer) {
+function createOffer(offer) {
   const {id, title, price} = offer;
   return (
     `<div class="event__offer-selector">
@@ -33,14 +33,14 @@ function createOffer (offer) {
   );
 }
 
-function createPhotoItem (photo) {
+function createPhotoItem(photo) {
   const {description, src} = photo;
   return (
     `<img class="event__photo" src=${src} alt=${description.replaceAll(' ', '&nbsp;')}/>`
   );
 }
 
-function createOffersSection (currentOffersObject) {
+function createOffersSection(currentOffersObject) {
   const offersTemplate = currentOffersObject.offers.map((offer) => createOffer(offer)).join('');
 
   return (
@@ -54,29 +54,69 @@ function createOffersSection (currentOffersObject) {
   );
 }
 
-function createDestinationInfo(currentDestinationObject) {
-  const photosTemplate = currentDestinationObject.pictures.map((picture) => createPhotoItem(picture)).join('');
+function createDescriptionParagraph(description) {
+  return (
+    `<p class="event__destination-description">${description}</p>`
+  );
+}
+
+function createPhotosContainer(photosTemplate) {
+  return (
+    `<div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${photosTemplate}
+      </div>
+    </div>`
+  );
+}
+
+function createDestinationSection(currentDestinationObject) {
+  let descriptionParagraphTemplate = '';
+  let photosContainerTemplate = '';
+
+  if (currentDestinationObject.description) {
+    descriptionParagraphTemplate = createDescriptionParagraph(currentDestinationObject.description);
+  }
+
+  if (currentDestinationObject.pictures.length > 0) {
+    const photosTemplate = currentDestinationObject.pictures.map((picture) => createPhotoItem(picture)).join('');
+    photosContainerTemplate = createPhotosContainer(photosTemplate);
+  }
 
   return (
     `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${currentDestinationObject.description}</p>
+      ${descriptionParagraphTemplate}
+      ${photosContainerTemplate}
+    </section>`
+  );
+}
 
-      <div class="event__photos-container">
-        <div class="event__photos-tape">
-          ${photosTemplate}
-        </div>
-      </div>
+function createDetailsSection (currentOffersObject, currentDestinationObject) {
+  let offersSectionTemplate = '';
+  let destinationSectionTemplate = '';
+
+  // Рендерим секцию офферов только если они есть в модели для данного destination
+  if (currentOffersObject.offers.length) {
+    offersSectionTemplate = createOffersSection(currentOffersObject);
+  }
+
+  // Рендерим секцию event__section--destination только если есть описание или картинки
+  if (currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
+    destinationSectionTemplate = createDestinationSection(currentDestinationObject);
+  }
+
+  return (
+    `<section class="event__details">
+      ${offersSectionTemplate}
+      ${destinationSectionTemplate}
     </section>`
   );
 }
 
 function createPointFormTemplate(point, offers, destinations) {
   const {id, type, destination, dateFrom, dateTo, basePrice} = point;
-  let currentDestinationObject = null;
-  let destinationName = '';
-  let destinationInfoTemplate = '';
-  let offersSectionTemplate = '';
+  let detailsSectionTemplate = '';
 
   const fullDateFrom = humanizePointDateTime(dateFrom);
   const fullDateTo = humanizePointDateTime(dateTo);
@@ -86,17 +126,12 @@ function createPointFormTemplate(point, offers, destinations) {
 
   const currentOffersObject = offers.find((value) => value.type === type);
 
-  // Рендерим секцию офферов только если они есть в модели для данного destination
-  if (currentOffersObject.offers.length) {
-    offersSectionTemplate = createOffersSection(currentOffersObject);
-  }
+  const currentDestinationObject = destinations.find((value) => value.id === destination);
+  const destinationName = currentDestinationObject.name;
 
-  // Рендерим секцию destination только если он выбран
-  if (destination) {
-    currentDestinationObject = destinations.find((value) => value.id === destination);
-    destinationName = currentDestinationObject.name;
-
-    destinationInfoTemplate = createDestinationInfo(currentDestinationObject);
+  // Рендерим секцию event__details только если для выбранного destination есть офферы или описание или картинки
+  if (currentOffersObject.offers.length || currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
+    detailsSectionTemplate = createDetailsSection(currentOffersObject, currentDestinationObject);
   }
 
   return (
@@ -147,10 +182,7 @@ function createPointFormTemplate(point, offers, destinations) {
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Cancel</button>
         </header>
-        <section class="event__details">
-          ${offersSectionTemplate}
-          ${destinationInfoTemplate}
-        </section>
+        ${detailsSectionTemplate}
       </form>
     </li>`
   );
