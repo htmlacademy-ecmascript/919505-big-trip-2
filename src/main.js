@@ -11,8 +11,13 @@ const boardContainerElement = document.querySelector('.trip-events');
 const tripInfoContainerElement = headerElement.querySelector('.trip-main');
 const pointFilterContainerElement = headerElement.querySelector('.trip-controls__filters');
 
-const tripInfoPresenter = new TripInfoPresenter(tripInfoContainerElement);
+const tripInfoPresenter = new TripInfoPresenter({
+  tripInfoContainerElement: tripInfoContainerElement,
+  pointsModel
+});
+
 const pointFilterPresenter = new PointFilterPresenter(pointFilterContainerElement);
+
 const boardPresenter = new BoardPresenter({
   boardContainer: boardContainerElement,
   pointsModel
