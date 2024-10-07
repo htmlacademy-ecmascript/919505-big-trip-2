@@ -2,7 +2,7 @@ const mockDestinations = [
   {
     id: '1',
     name: 'Paris',
-    description: 'У этой точки есть офферы, описание и картинка',
+    description: 'London is the capital of France.',
     pictures: [
       {
         src: 'https://loremflickr.com/248/152?random=1241522',
@@ -38,7 +38,7 @@ const mockDestinations = [
   {
     id: '4',
     name: 'Berlin',
-    description: 'Berlin is the capital of Germany.',
+    description: 'У этой точки есть и офферы, и описание и картинка',
     pictures: [
       {
         src: 'https://loremflickr.com/248/152?random=32552',

@@ -42,8 +42,8 @@ function createPhotoItem(photo) {
   );
 }
 
-function createOffersSection(currentOffersObject, checkedOffers) {
-  const offersTemplate = currentOffersObject.offers.map((offer) => createOffer(offer, checkedOffers)).join('');
+function createOffersSection(offers, checkedOffers) {
+  const offersTemplate = offers.map((offer) => createOffer(offer, checkedOffers)).join('');
 
   return (
     `<section class="event__section  event__section--offers">
@@ -94,13 +94,13 @@ function createDestinationSection(currentDestinationObject) {
   );
 }
 
-function createDetailsSection (currentOffersObject, checkedOffers, currentDestinationObject) {
+function createDetailsSection (offers, checkedOffers, currentDestinationObject) {
   let offersSectionTemplate = '';
   let destinationSectionTemplate = '';
 
   // Рендерим секцию офферов только если они есть в модели для данного destination
-  if (currentOffersObject.offers.length) {
-    offersSectionTemplate = createOffersSection(currentOffersObject, checkedOffers);
+  if (offers.length) {
+    offersSectionTemplate = createOffersSection(offers, checkedOffers);
   }
 
   // Рендерим секцию event__section--destination только если есть описание или картинки
@@ -119,21 +119,23 @@ function createDetailsSection (currentOffersObject, checkedOffers, currentDestin
 function createPointFormTemplate(point, offers, destinations) {
   const {id, type, destination, dateFrom, dateTo, basePrice} = point;
   let detailsSectionTemplate = '';
+  let destinationName = '';
 
-  const fullDateFrom = humanizePointDateTime(dateFrom);
-  const fullDateTo = humanizePointDateTime(dateTo);
+  const fullDateFrom = dateFrom === '' ? '' : humanizePointDateTime(dateFrom);
+  const fullDateTo = dateTo === '' ? '' : humanizePointDateTime(dateTo);
 
   const pointTypesItemsTemplate = POINT_TYPES.map((pointType) => createPointTypeItem(id, pointType, type)).join('');
   const destinationItemsTemplate = destinations.map((value) => createDestinationItem(value.name)).join('');
 
-  const currentOffersObject = offers.find((value) => value.type === type);
-
   const currentDestinationObject = destinations.find((value) => value.id === destination);
-  const destinationName = currentDestinationObject.name;
 
-  // Рендерим секцию event__details только если для выбранного destination есть офферы или описание или картинки
-  if (currentOffersObject.offers.length || currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
-    detailsSectionTemplate = createDetailsSection(currentOffersObject, point.offers, currentDestinationObject);
+  if (currentDestinationObject) {
+    destinationName = currentDestinationObject.name;
+
+    // Рендерим секцию event__details только если для выбранного destination есть офферы или описание или картинки
+    if (offers.length || currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
+      detailsSectionTemplate = createDetailsSection(offers, point.offers, currentDestinationObject);
+    }
   }
 
   return (

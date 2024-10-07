@@ -21,12 +21,24 @@ export default class BoardPresenter {
     render(this.sortingPanelComponent, this.boardContainer);
     render(this.pointListComponent, this.boardContainer);
 
+    // Рендерим несколько форм редактирования точки для демонстрации разных кейсов
     for (let i = 0; i < 5; i++) {
-      render(new PointFormView({point: this.points[i], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
+      render(new PointFormView({
+        point: this.points[i],
+        offers: this.pointsModel.getOfferObjectByPointType(this.points[i].type).offers,
+        destinations: this.destinations
+      }),
+      this.pointListComponent.getElement());
     }
 
+    // Рендерим точки
     for (let i = 5; i < this.points.length; i++) {
-      render(new PointItemView({point: this.points[i], offers: this.offers, destinations: this.destinations}), this.pointListComponent.getElement());
+      render(new PointItemView({
+        point: this.points[i],
+        offers: this.pointsModel.getChosenPointOffers(this.points[i].type, this.points[i].offers),
+        destinationName: this.pointsModel.getDestinationById(this.points[i].destination).name
+      }),
+      this.pointListComponent.getElement());
     }
   }
 }

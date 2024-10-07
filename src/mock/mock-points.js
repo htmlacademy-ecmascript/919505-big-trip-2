@@ -1,11 +1,13 @@
+import {BLANK_POINT} from '../const';
+
 const mockPoints = [
   {
     id: '1',
     type: 'ship',
-    basePrice: 1100,
+    basePrice: 7000,
     dateFrom: '2024-08-11T12:55:00.845Z',
     dateTo: '2024-08-11T18:43:00.375Z',
-    destination: '1',
+    destination: '4',
     isFavorite: false,
     offers: [
       '1',
@@ -16,7 +18,7 @@ const mockPoints = [
   {
     id: '2',
     type: 'restaurant',
-    basePrice: 1100,
+    basePrice: 5400,
     dateFrom: '2024-08-11T12:55:00.845Z',
     dateTo: '2024-08-11T18:43:00.375Z',
     destination: '2',
@@ -27,7 +29,7 @@ const mockPoints = [
   {
     id: '3',
     type: 'flight',
-    basePrice: 1100,
+    basePrice: 2000,
     dateFrom: '2024-08-11T12:55:00.845Z',
     dateTo: '2024-08-11T18:43:00.375Z',
     destination: '5',
@@ -41,7 +43,7 @@ const mockPoints = [
   {
     id: '4',
     type: 'check-in',
-    basePrice: 1100,
+    basePrice: 300,
     dateFrom: '2024-08-11T12:55:00.845Z',
     dateTo: '2024-08-11T18:43:00.375Z',
     destination: '7',
@@ -51,21 +53,12 @@ const mockPoints = [
     ]
   },
 
-  {
-    id: '5',
-    type: 'restaurant',
-    basePrice: 1100,
-    dateFrom: '2024-08-11T12:55:00.845Z',
-    dateTo: '2024-08-11T18:43:00.375Z',
-    destination: '6',
-    isFavorite: false,
-    offers: []
-  },
+  BLANK_POINT,
 
   {
     id: '6',
     type: 'taxi',
-    basePrice: 1100,
+    basePrice: 3000,
     dateFrom: '2024-07-08T12:55:00.845Z',
     dateTo: '2024-07-08T13:22:00.375Z',
     destination: '1',
@@ -93,7 +86,7 @@ const mockPoints = [
   {
     id: '8',
     type: 'train',
-    basePrice: 3000,
+    basePrice: 5500,
     dateFrom: '2024-09-16T04:20:00.845Z',
     dateTo: '2024-09-24T04:40:00.375Z',
     destination: '4',
