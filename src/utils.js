@@ -103,10 +103,10 @@ function humanizeTripTimeInterval (points) {
   const monthTo = dayjs(dateTo).format(DateFormat.MMM);
 
   if (monthFrom === monthTo) {
-    return `${dayjs(dateFrom).format(DateFormat.D)}&nbsp;—&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
+    return `${dayjs(dateFrom).format(DateFormat.D)}&nbsp;&mdash;&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
   }
 
-  return `${dayjs(dateFrom).format(DateFormat.DD_MMM)}&nbsp;—&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
+  return `${dayjs(dateFrom).format(DateFormat.DD_MMM)}&nbsp;&mdash;&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
 }
 
 export {humanizePointDate, humanizePointHours, humanizeTimeDifference, humanizePointDateTime, humanizeTripTimeInterval, DateFormat};
