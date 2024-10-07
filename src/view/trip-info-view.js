@@ -1,12 +1,12 @@
 import {createElement} from '../render';
-import {humanizeTripTimeInterval} from '../utils';
+import {humanizeTripTimeInterval, getMinMaxDates} from '../utils';
 
 function getDestinationName (destinations, destinationId) {
   return destinations.find((destination) => destination.id === destinationId).name;
 }
 
 function generateTitle (points, destinations) {
-  let title = '';
+  const {dateFrom, dateTo} = getMinMaxDates(points);
 
   if (!points.length) {
     return '';
@@ -16,22 +16,25 @@ function generateTitle (points, destinations) {
     return getDestinationName(destinations, points[0].destination);
   }
 
-  if (points.length > 3) {
-    const firstDestinationName = getDestinationName(destinations, points[0].destination);
-    const lastDestinationName = getDestinationName(destinations, points[points.length - 1].destination);
+  const firstPoint = points.find((point) => point.dateFrom === dateFrom);
+  const lastPoint = points.find((point) => point.dateTo === dateTo);
 
+  const firstDestinationName = getDestinationName(destinations, firstPoint.destination);
+  const lastDestinationName = getDestinationName(destinations, lastPoint.destination);
+
+
+  if (points.length > 3) {
     return `${firstDestinationName}-...-${lastDestinationName}`;
   }
 
-  points.forEach((point, index) => {
-    if (index === 0) {
-      title += getDestinationName(destinations, point.destination);
-    } else {
-      title += `-${getDestinationName(destinations, point.destination)}`;
-    }
-  });
+  const middlePoint = points.find((point) => point.dateFrom !== dateFrom && point.dateTo !== dateTo);
 
-  return title;
+  if (middlePoint) {
+    const middleDestinationName = getDestinationName(destinations, middlePoint.destination);
+    return `${firstDestinationName}-${middleDestinationName}-${lastDestinationName}`;
+  }
+
+  return `${firstDestinationName}-${lastDestinationName}`;
 }
 
 function generateTripValue (points, offers) {
