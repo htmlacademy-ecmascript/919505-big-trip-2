@@ -121,12 +121,6 @@ function createPointFormTemplate(point, offers, destinations) {
   let detailsSectionTemplate = '';
   let destinationName = '';
 
-  const fullDateFrom = dateFrom === '' ? '' : humanizePointDateTime(dateFrom);
-  const fullDateTo = dateTo === '' ? '' : humanizePointDateTime(dateTo);
-
-  const pointTypesItemsTemplate = POINT_TYPES.map((pointType) => createPointTypeItem(id, pointType, type)).join('');
-  const destinationItemsTemplate = destinations.map((value) => createDestinationItem(value.name)).join('');
-
   const currentDestinationObject = destinations.find((value) => value.id === destination);
 
   if (currentDestinationObject) {
@@ -152,7 +146,7 @@ function createPointFormTemplate(point, offers, destinations) {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${pointTypesItemsTemplate}
+                ${POINT_TYPES.map((pointType) => createPointTypeItem(id, pointType, type)).join('')}
               </fieldset>
             </div>
           </div>
@@ -163,16 +157,16 @@ function createPointFormTemplate(point, offers, destinations) {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${id}">
             <datalist id="destination-list-${id}">
-              ${destinationItemsTemplate}
+              ${destinations.map((value) => createDestinationItem(value.name)).join('')}
             </datalist>
           </div>
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${id}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value=${fullDateFrom}>
+            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value=${dateFrom === '' ? '' : humanizePointDateTime(dateFrom)}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-${id}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value=${fullDateTo}>
+            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value=${dateTo === '' ? '' : humanizePointDateTime(dateTo)}>
           </div>
 
           <div class="event__field-group  event__field-group--price">

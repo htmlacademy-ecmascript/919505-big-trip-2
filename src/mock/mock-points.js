@@ -19,8 +19,8 @@ const mockPoints = [
     id: '2',
     type: 'restaurant',
     basePrice: 5400,
-    dateFrom: '2024-08-11T12:55:00.845Z',
-    dateTo: '2024-08-11T18:43:00.375Z',
+    dateFrom: '2024-08-24T08:30:00.845Z',
+    dateTo: '2024-09-01T12:00:00.375Z',
     destination: '2',
     isFavorite: false,
     offers: []
@@ -30,8 +30,8 @@ const mockPoints = [
     id: '3',
     type: 'flight',
     basePrice: 2000,
-    dateFrom: '2024-08-11T12:55:00.845Z',
-    dateTo: '2024-08-11T18:43:00.375Z',
+    dateFrom: '2024-09-07T23:55:00.845Z',
+    dateTo: '2024-09-08T04:45:00.375Z',
     destination: '5',
     isFavorite: false,
     offers: [
@@ -44,8 +44,8 @@ const mockPoints = [
     id: '4',
     type: 'check-in',
     basePrice: 300,
-    dateFrom: '2024-08-11T12:55:00.845Z',
-    dateTo: '2024-08-11T18:43:00.375Z',
+    dateFrom: '2024-10-04T14:15:00.845Z',
+    dateTo: '2024-10-06T19:30:00.375Z',
     destination: '7',
     isFavorite: false,
     offers: [
