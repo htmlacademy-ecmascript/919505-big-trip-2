@@ -15,40 +15,30 @@ function createOfferTemplate (offer) {
 
 function createPointItemTemplate(point, offers, destinationName) {
   const {type, dateFrom, dateTo, basePrice, isFavorite} = point;
-
-  const pointFullDateFrom = humanizePointDate(dateFrom);
-  const pointFullDateTo = humanizePointDate(dateFrom);
-  const pointDate = humanizePointDate(dateFrom, DateFormat.MMM_DD);
-  const timeFrom = humanizePointHours(dateFrom);
-  const timeTo = humanizePointHours(dateTo);
-  const duration = humanizeTimeDifference(dateFrom, dateTo);
-
-  const offersTemplate = offers.map((offer) => createOfferTemplate(offer)).join('');
-
   const isPointFavoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
   return (
     `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${pointFullDateFrom}">${pointDate}</time>
+        <time class="event__date" datetime="${humanizePointDate(dateFrom)}">${humanizePointDate(dateFrom, DateFormat.MMM_DD)}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">${type} ${destinationName}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${pointFullDateFrom}T${timeFrom}">${timeFrom}</time>
+            <time class="event__start-time" datetime="${humanizePointDate(dateFrom)}T${humanizePointHours(dateFrom)}">${humanizePointHours(dateFrom)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${pointFullDateTo}T${timeTo}">${timeTo}</time>
+            <time class="event__end-time" datetime="${humanizePointDate(dateTo)}T${humanizePointHours(dateTo)}">${humanizePointHours(dateTo)}</time>
           </p>
-          <p class="event__duration">${duration}</p>
+          <p class="event__duration">${humanizeTimeDifference(dateFrom, dateTo)}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${offersTemplate}
+          ${offers.map((offer) => createOfferTemplate(offer)).join('')}
         </ul>
         <button class="event__favorite-btn ${isPointFavoriteClassName}" type="button">
           <span class="visually-hidden">Add to favorite</span>
