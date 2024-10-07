@@ -53,6 +53,19 @@ const mockPoints = [
     ]
   },
 
+  {
+    id: '5',
+    type: 'check-in',
+    basePrice: 300,
+    dateFrom: '2024-10-04T14:15:00.845Z',
+    dateTo: '2024-10-06T19:30:00.375Z',
+    destination: '6',
+    isFavorite: false,
+    offers: [
+      '1'
+    ]
+  },
+
   BLANK_POINT,
 
   {
@@ -74,7 +87,7 @@ const mockPoints = [
     type: 'bus',
     basePrice: 5000,
     dateFrom: '2024-10-01T14:24:00.845Z',
-    dateTo: '2024-10-01T16:24:00.375Z',
+    dateTo: '2024-10-21T16:24:00.375Z',
     destination: '3',
     isFavorite: true,
     offers: [
@@ -89,7 +102,7 @@ const mockPoints = [
     basePrice: 5500,
     dateFrom: '2024-09-16T04:20:00.845Z',
     dateTo: '2024-09-24T04:40:00.375Z',
-    destination: '4',
+    destination: '2',
     isFavorite: false,
     offers: [
       '1',

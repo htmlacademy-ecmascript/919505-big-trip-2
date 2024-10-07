@@ -1,4 +1,5 @@
 import {createElement} from '../render';
+import {humanizeTripTimeInterval} from '../utils';
 
 function getDestinationName (destinations, destinationId) {
   return destinations.find((destination) => destination.id === destinationId).name;
@@ -52,12 +53,13 @@ function generateTripValue (points, offers) {
 function createTripInfoTemplate(points, destinations, offers) {
   const title = generateTitle(points, destinations);
   const tripValue = generateTripValue(points, offers);
+  const timeInterval = humanizeTripTimeInterval(points);
 
   return (
     `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
         <h1 class="trip-info__title">${title}</h1>
-        <p class="trip-info__dates">18&nbsp;&mdash;&nbsp;20 Mar</p>
+        <p class="trip-info__dates">${timeInterval}</p>
       </div>
 
       <p class="trip-info__cost">

@@ -10,20 +10,23 @@ const DateFormat = {
   YYYY_MM_DD: 'YYYY-MM-DD',
   YY_MM_DD: 'YY/MM/DD',
   MMM_DD: 'MMM DD',
+  DD_MMM: 'D MMM',
   HH_MM: 'HH MM',
+  MMM: 'MMM',
+  D: 'D',
   HH: 'HH',
   MM: 'mm',
 };
 
-function humanizePointDate(pointDate, format = DateFormat.YYYY_MM_DD) {
+function humanizePointDate (pointDate, format = DateFormat.YYYY_MM_DD) {
   return pointDate ? dayjs(pointDate).format(format) : '';
 }
 
-function humanizePointHours(pointDate) {
+function humanizePointHours (pointDate) {
   return pointDate ? `${dayjs(pointDate).format(DateFormat.HH)}:${dayjs(pointDate).format(DateFormat.MM)}` : '';
 }
 
-function humanizePointDateTime(pointDateTime) {
+function humanizePointDateTime (pointDateTime) {
   const humanizedDate = dayjs(pointDateTime).format(DateFormat.YY_MM_DD);
   const humanizedHours = dayjs(pointDateTime).format(DateFormat.HH);
   const humanizedMinutes = dayjs(pointDateTime).format(DateFormat.MM);
@@ -31,7 +34,7 @@ function humanizePointDateTime(pointDateTime) {
   return `${humanizedDate}&nbsp;${humanizedHours}:${humanizedMinutes}`;
 }
 
-function humanizeTimeDifference(dateFrom, dateTo) {
+function humanizeTimeDifference (dateFrom, dateTo) {
   let difference = '';
   const start = dayjs(dateFrom);
   const finish = dayjs(dateTo);
@@ -74,4 +77,36 @@ function humanizeTimeDifference(dateFrom, dateTo) {
   return difference;
 }
 
-export {humanizePointDate, humanizePointHours, humanizeTimeDifference, humanizePointDateTime, DateFormat};
+function humanizeTripTimeInterval (points) {
+  let dateFrom = null;
+  let dateTo = null;
+
+  points.forEach((point) => {
+    if (!dateFrom) {
+      dateFrom = point.dateFrom;
+    }
+
+    if (!dateTo) {
+      dateTo = point.dateTo;
+    }
+
+    if (point.dateFrom < dateFrom) {
+      dateFrom = point.dateFrom;
+    }
+
+    if (point.dateTo > dateTo) {
+      dateTo = point.dateTo;
+    }
+  });
+
+  const monthFrom = dayjs(dateFrom).format(DateFormat.MMM);
+  const monthTo = dayjs(dateTo).format(DateFormat.MMM);
+
+  if (monthFrom === monthTo) {
+    return `${dayjs(dateFrom).format(DateFormat.D)}&nbsp;—&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
+  }
+
+  return `${dayjs(dateFrom).format(DateFormat.DD_MMM)}&nbsp;—&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
+}
+
+export {humanizePointDate, humanizePointHours, humanizeTimeDifference, humanizePointDateTime, humanizeTripTimeInterval, DateFormat};

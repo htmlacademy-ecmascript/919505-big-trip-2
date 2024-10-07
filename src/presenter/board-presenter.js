@@ -22,7 +22,7 @@ export default class BoardPresenter {
     render(this.pointListComponent, this.boardContainer);
 
     // Рендерим несколько форм редактирования точки для демонстрации разных кейсов
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 6; i++) {
       render(new PointFormView({
         point: this.points[i],
         offers: this.pointsModel.getOfferObjectByPointType(this.points[i].type).offers,
@@ -32,7 +32,7 @@ export default class BoardPresenter {
     }
 
     // Рендерим точки
-    for (let i = 5; i < this.points.length; i++) {
+    for (let i = 6; i < this.points.length; i++) {
       render(new PointItemView({
         point: this.points[i],
         offers: this.pointsModel.getChosenPointOffers(this.points[i].type, this.points[i].offers),
