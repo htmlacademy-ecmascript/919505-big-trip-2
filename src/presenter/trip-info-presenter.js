@@ -10,6 +10,13 @@ export default class TripInfoPresenter {
   init() {
     this.points = this.pointsModel.getPoints();
     this.destinations = this.pointsModel.getDestinations();
-    render(new TripInfoView({points: this.points, destinations: this.destinations}), this.tripInfoContainerElement, RenderPosition.AFTERBEGIN);
+    this.offers = this.pointsModel.getOffers();
+
+    render(new TripInfoView({
+      points: this.points,
+      destinations: this.destinations,
+      offers: this.offers
+    }),
+    this.tripInfoContainerElement, RenderPosition.AFTERBEGIN);
   }
 }
