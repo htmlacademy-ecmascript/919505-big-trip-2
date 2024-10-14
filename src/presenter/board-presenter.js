@@ -1,8 +1,9 @@
-import {render} from '../framework/render.js';
+import {KeyCode} from '../const';
+import {render, replace} from '../framework/render';
 import PointSortingPanelView from '../view/point-sorting-panel-view';
 import PointFormView from '../view/point-form-view';
 import PointListView from '../view/point-list-view';
-import PointItemView from '../view/point-item-view';
+import PointCardView from '../view/point-card-view';
 
 export default class BoardPresenter {
   #sortingPanelComponent = new PointSortingPanelView();
@@ -16,28 +17,70 @@ export default class BoardPresenter {
   }
 
   init() {
+    this.#renderBoard();
+  }
+
+  //Рендерит доску
+  #renderBoard() {
     render(this.#sortingPanelComponent, this.#boardContainer);
     render(this.#pointListComponent, this.#boardContainer);
 
-    /*Рендерим несколько форм редактирования точки для демонстрации разных кейсов
-    for (let i = 0; i < 6; i++) {
-      render(new PointFormView({
-        point: this.#pointsModel.points[i],
-        offers: this.#pointsModel.getOfferObjectByPointType(this.#pointsModel.points[i].type).offers,
-        destinations: this.#pointsModel.destinations
-      }),
-      this.#pointListComponent.element);
-    }
-     */
-
-    // Рендерим точки
     for (let i = 0; i < this.#pointsModel.points.length; i++) {
-      render(new PointItemView({
-        point: this.#pointsModel.points[i],
-        offers: this.#pointsModel.getChosenPointOffers(this.#pointsModel.points[i].type, this.#pointsModel.points[i].offers),
-        destinationName: this.#pointsModel.getDestinationById(this.#pointsModel.points[i].destination).name
-      }),
-      this.#pointListComponent.element);
+      this.#renderPoint(this.#pointsModel.points[i]);
     }
+  }
+
+  // Рендерит точку
+  #renderPoint(point) {
+    const pointComponent = this.#createPointCardView(point, replaceCardToForm, escKeyDownHandler);
+    const pointFormComponent = this.#createPointFormView(point, replaceFormToCard, escKeyDownHandler);
+
+    function replaceCardToForm() {
+      replace(pointFormComponent, pointComponent);
+    }
+    function replaceFormToCard() {
+      replace(pointComponent, pointFormComponent);
+    }
+
+    function escKeyDownHandler(evt) {
+      if (evt.key === KeyCode.ESCAPE) {
+        evt.preventDefault();
+        replaceFormToCard();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    }
+
+    render(pointComponent, this.#pointListComponent.element);
+  }
+
+  //Возвращает новый экземпляр формы редактирования точки
+  #createPointFormView(point, replaceFormToCard, escKeyDownHandler) {
+    const offers = this.#pointsModel.getOfferObjectByPointType(point.type).offers;
+    const destinations = this.#pointsModel.destinations;
+
+    function onCloseButtonClick() {
+      replaceFormToCard();
+      document.removeEventListener('keydown', escKeyDownHandler);
+    }
+
+    function onFormSubmit() {
+      replaceFormToCard();
+      document.removeEventListener('keydown', escKeyDownHandler);
+    }
+
+    return new PointFormView({point, offers, destinations, onCloseButtonClick, onFormSubmit});
+  }
+
+  //Возвращает новый экземпляр карточки точки
+  #createPointCardView(point, replaceCardToForm, escKeyDownHandler) {
+    const offers = this.#pointsModel.getChosenPointOffers(point.type, point.offers);
+    const destinationName = this.#pointsModel.getDestinationById(point.destination).name;
+
+    function onEditClick() {
+      replaceCardToForm();
+      document.addEventListener('keydown', escKeyDownHandler);
+    }
+
+    return new PointCardView({point, offers, destinationName, onEditClick});
   }
 }

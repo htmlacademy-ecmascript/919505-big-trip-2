@@ -1,3 +1,7 @@
+const KeyCode = {
+  ESCAPE: 'Escape'
+};
+
 const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const BLANK_POINT = {
@@ -11,4 +15,4 @@ const BLANK_POINT = {
   offers: []
 };
 
-export {POINT_TYPES, BLANK_POINT};
+export {KeyCode, POINT_TYPES, BLANK_POINT};

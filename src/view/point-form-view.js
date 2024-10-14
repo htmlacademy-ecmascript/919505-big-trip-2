@@ -19,6 +19,14 @@ function createDestinationItem(destination) {
   );
 }
 
+function createRollupItem() {
+  return (
+    `<button class="event__rollup-btn" type="button">
+      <span class="visually-hidden">Open event</span>
+    </button>`
+  );
+}
+
 function createOffer(offer, checkedOffers, pointId) {
   const {id, title, price} = offer;
   const isChecked = checkedOffers.includes(offer.id) ? 'checked' : '';
@@ -94,7 +102,7 @@ function createDestinationSection(currentDestinationObject) {
   );
 }
 
-function createDetailsSection (offers, pointId, checkedOffers, currentDestinationObject) {
+function createDetailsSection(offers, pointId, checkedOffers, currentDestinationObject) {
   let offersSectionTemplate = '';
   let destinationSectionTemplate = '';
 
@@ -131,6 +139,8 @@ function createPointFormTemplate(point, offers, destinations) {
       detailsSectionTemplate = createDetailsSection(offers, id, point.offers, currentDestinationObject);
     }
   }
+
+  const rollupTemplate = point.id ? createRollupItem() : '';
 
   return (
     `<li class="trip-events__item">
@@ -179,6 +189,7 @@ function createPointFormTemplate(point, offers, destinations) {
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Cancel</button>
+          ${rollupTemplate}
         </header>
         ${detailsSectionTemplate}
       </form>
@@ -190,15 +201,31 @@ export default class PointFormView extends AbstractView {
   #point = null;
   #offers = [];
   #destinations = null;
+  #handleCloseButtonClick = () => {};
+  #handleFormSubmit = () => {};
 
-  constructor({point, offers, destinations}) {
+  constructor({point, offers, destinations, onCloseButtonClick, onFormSubmit}) {
     super();
     this.#point = point;
     this.#offers = offers;
     this.#destinations = destinations;
+    this.#handleCloseButtonClick = onCloseButtonClick;
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#CloseButtonClickHandler);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
   get template() {
     return createPointFormTemplate(this.#point, this.#offers, this.#destinations);
   }
+
+  #CloseButtonClickHandler = () => {
+    this.#handleCloseButtonClick();
+  };
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }

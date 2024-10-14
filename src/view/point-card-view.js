@@ -13,7 +13,7 @@ function createOfferTemplate (offer) {
   );
 }
 
-function createPointItemTemplate(point, offers, destinationName) {
+function createPointCardTemplate(point, offers, destinationName) {
   const {type, dateFrom, dateTo, basePrice, isFavorite} = point;
   const isPointFavoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
@@ -54,19 +54,27 @@ function createPointItemTemplate(point, offers, destinationName) {
   );
 }
 
-export default class PointItemView extends AbstractView {
+export default class PointCardView extends AbstractView {
   #point = null;
   #offers = [];
   #destinationName = null;
+  #handleEditClick = () => {};
 
-  constructor({point, offers, destinationName}) {
+  constructor({point, offers, destinationName, onEditClick}) {
     super();
     this.#point = point;
     this.#offers = offers;
     this.#destinationName = destinationName;
+    this.#handleEditClick = onEditClick;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
-    return createPointItemTemplate(this.#point, this.#offers, this.#destinationName);
+    return createPointCardTemplate(this.#point, this.#offers, this.#destinationName);
   }
+
+  #editClickHandler = () => {
+    this.#handleEditClick();
+  };
 }
