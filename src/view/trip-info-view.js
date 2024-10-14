@@ -73,14 +73,18 @@ function createTripInfoTemplate(points, destinations, offers) {
 }
 
 export default class TripInfoView extends AbstractView {
+  #points = [];
+  #destinations = [];
+  #offers = [];
+
   constructor({points, destinations, offers}) {
     super();
-    this.points = points;
-    this.destinations = destinations;
-    this.offers = offers;
+    this.#points = points;
+    this.#destinations = destinations;
+    this.#offers = offers;
   }
 
   get template() {
-    return createTripInfoTemplate(this.points, this.destinations, this.offers);
+    return createTripInfoTemplate(this.#points, this.#destinations, this.#offers);
   }
 }
