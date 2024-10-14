@@ -1,4 +1,4 @@
-import {render} from '../render';
+import {render} from '../framework/render.js';
 import PointSortingPanelView from '../view/point-sorting-panel-view';
 import PointFormView from '../view/point-form-view';
 import PointListView from '../view/point-list-view';
@@ -28,7 +28,7 @@ export default class BoardPresenter {
         offers: this.pointsModel.getOfferObjectByPointType(this.points[i].type).offers,
         destinations: this.destinations
       }),
-      this.pointListComponent.getElement());
+      this.pointListComponent.element);
     }
 
     // Рендерим точки
@@ -38,7 +38,7 @@ export default class BoardPresenter {
         offers: this.pointsModel.getChosenPointOffers(this.points[i].type, this.points[i].offers),
         destinationName: this.pointsModel.getDestinationById(this.points[i].destination).name
       }),
-      this.pointListComponent.getElement());
+      this.pointListComponent.element);
     }
   }
 }

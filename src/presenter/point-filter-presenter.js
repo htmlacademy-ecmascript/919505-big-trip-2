@@ -1,4 +1,4 @@
-import {render, RenderPosition} from '../render';
+import {render, RenderPosition} from '../framework/render.js';
 import PointFilterView from '../view/point-filter-view';
 
 export default class PointFilterPresenter {

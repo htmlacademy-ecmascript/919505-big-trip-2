@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createPointFilterTemplate() {
   return (
@@ -27,19 +27,9 @@ function createPointFilterTemplate() {
       </form>`
   );
 }
-export default class PointFilterView {
-  getTemplate() {
+
+export default class PointFilterView extends AbstractView {
+  get template() {
     return createPointFilterTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
