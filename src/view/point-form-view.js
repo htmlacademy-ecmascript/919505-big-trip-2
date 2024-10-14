@@ -19,14 +19,14 @@ function createDestinationItem(destination) {
   );
 }
 
-function createOffer(offer, checkedOffers) {
+function createOffer(offer, checkedOffers, pointId) {
   const {id, title, price} = offer;
   const isChecked = checkedOffers.includes(offer.id) ? 'checked' : '';
 
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-${id}" type="checkbox" name="event-offer-${title}" ${isChecked}>
-      <label class="event__offer-label" for="event-offer-${title}-${id}">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${pointId}-${id}" type="checkbox" name="event-offer-${title}" ${isChecked}>
+      <label class="event__offer-label" for="event-offer-${pointId}-${id}">
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${price}</span>
@@ -42,8 +42,8 @@ function createPhotoItem(photo) {
   );
 }
 
-function createOffersSection(offers, checkedOffers) {
-  const offersTemplate = offers.map((offer) => createOffer(offer, checkedOffers)).join('');
+function createOffersSection(offers, checkedOffers, pointId) {
+  const offersTemplate = offers.map((offer) => createOffer(offer, checkedOffers, pointId)).join('');
 
   return (
     `<section class="event__section  event__section--offers">
@@ -94,13 +94,13 @@ function createDestinationSection(currentDestinationObject) {
   );
 }
 
-function createDetailsSection (offers, checkedOffers, currentDestinationObject) {
+function createDetailsSection (offers, pointId, checkedOffers, currentDestinationObject) {
   let offersSectionTemplate = '';
   let destinationSectionTemplate = '';
 
   // Рендерим секцию офферов только если они есть в модели для данного destination
   if (offers.length) {
-    offersSectionTemplate = createOffersSection(offers, checkedOffers);
+    offersSectionTemplate = createOffersSection(offers, checkedOffers, pointId);
   }
 
   // Рендерим секцию event__section--destination только если есть описание или картинки
@@ -128,7 +128,7 @@ function createPointFormTemplate(point, offers, destinations) {
 
     // Рендерим секцию event__details только если для выбранного destination есть офферы или описание или картинки
     if (offers.length || currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
-      detailsSectionTemplate = createDetailsSection(offers, point.offers, currentDestinationObject);
+      detailsSectionTemplate = createDetailsSection(offers, id, point.offers, currentDestinationObject);
     }
   }
 
