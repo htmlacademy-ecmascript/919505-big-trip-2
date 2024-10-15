@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeTripTimeInterval, getMinMaxDates} from '../utils';
 
 function getDestinationName (destinations, destinationId) {
@@ -72,25 +72,19 @@ function createTripInfoTemplate(points, destinations, offers) {
   );
 }
 
-export default class TripInfoView {
+export default class TripInfoView extends AbstractView {
+  #points = [];
+  #destinations = [];
+  #offers = [];
+
   constructor({points, destinations, offers}) {
-    this.points = points;
-    this.destinations = destinations;
-    this.offers = offers;
+    super();
+    this.#points = points;
+    this.#destinations = destinations;
+    this.#offers = offers;
   }
 
-  getTemplate() {
-    return createTripInfoTemplate(this.points, this.destinations, this.offers);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createTripInfoTemplate(this.#points, this.#destinations, this.#offers);
   }
 }

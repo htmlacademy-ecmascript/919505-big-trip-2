@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDate, humanizePointHours, humanizeTimeDifference, DateFormat} from '../utils';
 
 function createOfferTemplate (offer) {
@@ -13,7 +13,7 @@ function createOfferTemplate (offer) {
   );
 }
 
-function createPointItemTemplate(point, offers, destinationName) {
+function createPointCardTemplate(point, offers, destinationName) {
   const {type, dateFrom, dateTo, basePrice, isFavorite} = point;
   const isPointFavoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
@@ -54,25 +54,27 @@ function createPointItemTemplate(point, offers, destinationName) {
   );
 }
 
-export default class PointItemView {
-  constructor({point, offers, destinationName}) {
-    this.point = point;
-    this.offers = offers;
-    this.destinationName = destinationName;
+export default class PointCardView extends AbstractView {
+  #point = null;
+  #offers = [];
+  #destinationName = null;
+  #handleEditClick = () => {};
+
+  constructor({point, offers, destinationName, onEditClick}) {
+    super();
+    this.#point = point;
+    this.#offers = offers;
+    this.#destinationName = destinationName;
+    this.#handleEditClick = onEditClick;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
-  getTemplate() {
-    return createPointItemTemplate(this.point, this.offers, this.destinationName);
+  get template() {
+    return createPointCardTemplate(this.#point, this.#offers, this.#destinationName);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #editClickHandler = () => {
+    this.#handleEditClick();
+  };
 }

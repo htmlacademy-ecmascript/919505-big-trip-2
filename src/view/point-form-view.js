@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDateTime} from '../utils';
 import {POINT_TYPES} from '../const';
 
@@ -19,14 +19,22 @@ function createDestinationItem(destination) {
   );
 }
 
-function createOffer(offer, checkedOffers) {
+function createRollupItem() {
+  return (
+    `<button class="event__rollup-btn" type="button">
+      <span class="visually-hidden">Open event</span>
+    </button>`
+  );
+}
+
+function createOffer(offer, checkedOffers, pointId) {
   const {id, title, price} = offer;
   const isChecked = checkedOffers.includes(offer.id) ? 'checked' : '';
 
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-${id}" type="checkbox" name="event-offer-${title}" ${isChecked}>
-      <label class="event__offer-label" for="event-offer-${title}-${id}">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${pointId}-${id}" type="checkbox" name="event-offer-${title}" ${isChecked}>
+      <label class="event__offer-label" for="event-offer-${pointId}-${id}">
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${price}</span>
@@ -42,8 +50,8 @@ function createPhotoItem(photo) {
   );
 }
 
-function createOffersSection(offers, checkedOffers) {
-  const offersTemplate = offers.map((offer) => createOffer(offer, checkedOffers)).join('');
+function createOffersSection(offers, checkedOffers, pointId) {
+  const offersTemplate = offers.map((offer) => createOffer(offer, checkedOffers, pointId)).join('');
 
   return (
     `<section class="event__section  event__section--offers">
@@ -94,13 +102,13 @@ function createDestinationSection(currentDestinationObject) {
   );
 }
 
-function createDetailsSection (offers, checkedOffers, currentDestinationObject) {
+function createDetailsSection(offers, pointId, checkedOffers, currentDestinationObject) {
   let offersSectionTemplate = '';
   let destinationSectionTemplate = '';
 
   // Рендерим секцию офферов только если они есть в модели для данного destination
   if (offers.length) {
-    offersSectionTemplate = createOffersSection(offers, checkedOffers);
+    offersSectionTemplate = createOffersSection(offers, checkedOffers, pointId);
   }
 
   // Рендерим секцию event__section--destination только если есть описание или картинки
@@ -128,9 +136,11 @@ function createPointFormTemplate(point, offers, destinations) {
 
     // Рендерим секцию event__details только если для выбранного destination есть офферы или описание или картинки
     if (offers.length || currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
-      detailsSectionTemplate = createDetailsSection(offers, point.offers, currentDestinationObject);
+      detailsSectionTemplate = createDetailsSection(offers, id, point.offers, currentDestinationObject);
     }
   }
+
+  const rollupTemplate = point.id ? createRollupItem() : '';
 
   return (
     `<li class="trip-events__item">
@@ -179,6 +189,7 @@ function createPointFormTemplate(point, offers, destinations) {
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Cancel</button>
+          ${rollupTemplate}
         </header>
         ${detailsSectionTemplate}
       </form>
@@ -186,25 +197,35 @@ function createPointFormTemplate(point, offers, destinations) {
   );
 }
 
-export default class PointFormView {
-  constructor({point, offers, destinations}) {
-    this.point = point;
-    this.offers = offers;
-    this.destinations = destinations;
+export default class PointFormView extends AbstractView {
+  #point = null;
+  #offers = [];
+  #destinations = null;
+  #handleCloseButtonClick = () => {};
+  #handleFormSubmit = () => {};
+
+  constructor({point, offers, destinations, onCloseButtonClick, onFormSubmit}) {
+    super();
+    this.#point = point;
+    this.#offers = offers;
+    this.#destinations = destinations;
+    this.#handleCloseButtonClick = onCloseButtonClick;
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#CloseButtonClickHandler);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
-  getTemplate() {
-    return createPointFormTemplate(this.point, this.offers, this.destinations);
+  get template() {
+    return createPointFormTemplate(this.#point, this.#offers, this.#destinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
+  #CloseButtonClickHandler = () => {
+    this.#handleCloseButtonClick();
+  };
 
-  removeElement() {
-    this.element = null;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }

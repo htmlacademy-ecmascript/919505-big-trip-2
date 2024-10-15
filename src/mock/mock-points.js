@@ -1,5 +1,3 @@
-import {BLANK_POINT} from '../const';
-
 const mockPoints = [
   {
     id: '1',
@@ -65,8 +63,6 @@ const mockPoints = [
       '1'
     ]
   },
-
-  BLANK_POINT,
 
   {
     id: '6',
