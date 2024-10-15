@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {humanizeTripTimeInterval, getMinMaxDates} from '../utils';
+import {humanizeTripTimeInterval, getMinMaxDates} from '../utils/dates';
 
 function getDestinationName (destinations, destinationId) {
   return destinations.find((destination) => destination.id === destinationId).name;

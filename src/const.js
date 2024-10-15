@@ -2,6 +2,13 @@ const KeyCode = {
   ESCAPE: 'Escape'
 };
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
+};
+
 const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const BLANK_POINT = {
@@ -15,4 +22,4 @@ const BLANK_POINT = {
   offers: []
 };
 
-export {KeyCode, POINT_TYPES, BLANK_POINT};
+export {KeyCode, FilterType, POINT_TYPES, BLANK_POINT};
