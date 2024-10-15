@@ -66,7 +66,7 @@ export default class BoardPresenter {
 
     function closeForm() {
       replace(pointComponent, pointFormComponent);
-      document.removeEventListener('keydown', escKeyDownHandler)
+      document.removeEventListener('keydown', escKeyDownHandler);
     }
 
     function escKeyDownHandler(evt) {
