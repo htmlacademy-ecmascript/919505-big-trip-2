@@ -56,21 +56,23 @@ export default class BoardPresenter {
 
   // Рендерит точку
   #renderPoint(point) {
-    const pointComponent = this.#createPointCardView(point, replaceCardToForm, escKeyDownHandler);
-    const pointFormComponent = this.#createPointFormView(point, replaceFormToCard, escKeyDownHandler);
+    const pointComponent = this.#createPointCardView(point, openForm);
+    const pointFormComponent = this.#createPointFormView(point, closeForm);
 
-    function replaceCardToForm() {
+    function openForm() {
       replace(pointFormComponent, pointComponent);
+      document.addEventListener('keydown', escKeyDownHandler);
     }
-    function replaceFormToCard() {
+
+    function closeForm() {
       replace(pointComponent, pointFormComponent);
+      document.removeEventListener('keydown', escKeyDownHandler)
     }
 
     function escKeyDownHandler(evt) {
       if (evt.key === KeyCode.ESCAPE) {
         evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener('keydown', escKeyDownHandler);
+        closeForm();
       }
     }
 
@@ -78,31 +80,28 @@ export default class BoardPresenter {
   }
 
   //Возвращает новый экземпляр карточки точки
-  #createPointCardView(point, replaceCardToForm, escKeyDownHandler) {
+  #createPointCardView(point, openForm) {
     const offers = this.#pointsModel.getChosenPointOffers(point.type, point.offers);
     const destinationName = this.#pointsModel.getDestinationById(point.destination).name;
 
     function onEditClick() {
-      replaceCardToForm();
-      document.addEventListener('keydown', escKeyDownHandler);
+      openForm();
     }
 
     return new PointCardView({point, offers, destinationName, onEditClick});
   }
 
   //Возвращает новый экземпляр формы редактирования точки
-  #createPointFormView(point, replaceFormToCard, escKeyDownHandler) {
+  #createPointFormView(point, closeForm) {
     const offers = this.#pointsModel.getOfferObjectByPointType(point.type).offers;
     const destinations = this.#pointsModel.destinations;
 
     function onCloseButtonClick() {
-      replaceFormToCard();
-      document.removeEventListener('keydown', escKeyDownHandler);
+      closeForm();
     }
 
     function onFormSubmit() {
-      replaceFormToCard();
-      document.removeEventListener('keydown', escKeyDownHandler);
+      closeForm();
     }
 
     return new PointFormView({point, offers, destinations, onCloseButtonClick, onFormSubmit});
