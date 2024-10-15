@@ -47,7 +47,7 @@ function humanizeTimeDifference (dateFrom, dateTo) {
   if (differenceInMilliSeconds > MillisecondQuantity.DAY) {
     days = Math.floor(differenceInMilliSeconds / MillisecondQuantity.DAY);
     differenceInMilliSeconds -= MillisecondQuantity.DAY * days;
-    difference += `${days}D `;
+    difference += `${days < 10 ? '0' : ''}${days}D `;
   }
 
   if (differenceInMilliSeconds >= MillisecondQuantity.HOUR || days) {
@@ -61,7 +61,7 @@ function humanizeTimeDifference (dateFrom, dateTo) {
       hours++;
     }
 
-    difference += `${hours === 0 ? '00' : hours}H `;
+    difference += `${hours < 10 ? '0' : ''}${hours}H `;
   }
 
   if (!minutes) {
@@ -71,7 +71,7 @@ function humanizeTimeDifference (dateFrom, dateTo) {
   if ((minutes === 0 || minutes === 60) && hours) {
     difference += '00M';
   } else {
-    difference += `${minutes}M`;
+    difference += `${minutes < 10 ? '0' : ''}${minutes}M`;
   }
 
   return difference;
