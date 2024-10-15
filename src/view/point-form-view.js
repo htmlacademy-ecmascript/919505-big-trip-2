@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {humanizePointDateTime} from '../utils';
+import {humanizePointDateTime} from '../utils/dates';
 import {POINT_TYPES} from '../const';
 
 function createPointTypeItem(pointId, pointType, currentPointType) {
