@@ -1,5 +1,10 @@
 import dayjs from 'dayjs';
 
+const TimeThreshold = {
+  SIXTY: 60,
+  TEN: 10
+};
+
 const MillisecondQuantity = {
   DAY: 86400000,
   HOUR: 3600000,
@@ -47,7 +52,7 @@ function humanizeTimeDifference (dateFrom, dateTo) {
   if (differenceInMilliSeconds > MillisecondQuantity.DAY) {
     days = Math.floor(differenceInMilliSeconds / MillisecondQuantity.DAY);
     differenceInMilliSeconds -= MillisecondQuantity.DAY * days;
-    difference += `${days}D `;
+    difference += `${days < TimeThreshold.TEN ? '0' : ''}${days}D `;
   }
 
   if (differenceInMilliSeconds >= MillisecondQuantity.HOUR || days) {
@@ -57,21 +62,21 @@ function humanizeTimeDifference (dateFrom, dateTo) {
 
     minutes = Math.ceil(differenceInMilliSeconds / MillisecondQuantity.MINUTE);
 
-    if (minutes === 60) {
+    if (minutes === TimeThreshold.SIXTY) {
       hours++;
     }
 
-    difference += `${hours === 0 ? '00' : hours}H `;
+    difference += `${hours < TimeThreshold.TEN ? '0' : ''}${hours}H `;
   }
 
   if (!minutes) {
     minutes = Math.ceil(differenceInMilliSeconds / MillisecondQuantity.MINUTE);
   }
 
-  if ((minutes === 0 || minutes === 60) && hours) {
+  if ((minutes === 0 || minutes === TimeThreshold.SIXTY) && hours) {
     difference += '00M';
   } else {
-    difference += `${minutes}M`;
+    difference += `${minutes < TimeThreshold.TEN ? '0' : ''}${minutes}M`;
   }
 
   return difference;

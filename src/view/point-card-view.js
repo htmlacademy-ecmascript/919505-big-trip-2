@@ -13,7 +13,7 @@ function createOfferTemplate (offer) {
   );
 }
 
-function createPointCardTemplate(point, offers, destinationName) {
+function createPointCardTemplate(point, offers, destination) {
   const {type, dateFrom, dateTo, basePrice, isFavorite} = point;
   const isPointFavoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
@@ -24,7 +24,7 @@ function createPointCardTemplate(point, offers, destinationName) {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${destinationName}</h3>
+        <h3 class="event__title">${type} ${destination}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${humanizePointDate(dateFrom)}T${humanizePointHours(dateFrom)}">${humanizePointHours(dateFrom)}</time>
@@ -57,21 +57,21 @@ function createPointCardTemplate(point, offers, destinationName) {
 export default class PointCardView extends AbstractView {
   #point = null;
   #offers = [];
-  #destinationName = null;
+  #destination = null;
   #handleEditClick = () => {};
 
-  constructor({point, offers, destinationName, onEditClick}) {
+  constructor({point, offers, destination, onEditClick}) {
     super();
     this.#point = point;
     this.#offers = offers;
-    this.#destinationName = destinationName;
+    this.#destination = destination;
     this.#handleEditClick = onEditClick;
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
-    return createPointCardTemplate(this.#point, this.#offers, this.#destinationName);
+    return createPointCardTemplate(this.#point, this.#offers, this.#destination);
   }
 
   #editClickHandler = () => {

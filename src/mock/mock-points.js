@@ -83,7 +83,7 @@ const mockPoints = [
     type: 'bus',
     basePrice: 5000,
     dateFrom: '2024-10-01T14:24:00.845Z',
-    dateTo: '2024-10-21T16:24:00.375Z',
+    dateTo: '2024-10-21T16:30:00.375Z',
     destination: '3',
     isFavorite: true,
     offers: [
