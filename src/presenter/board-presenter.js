@@ -8,9 +8,12 @@ import PointPresenter from './point-presenter';
 export default class BoardPresenter {
   #sortingPanelComponent = new PointSortingPanelView();
   #pointListComponent = new PointListView();
+
   #boardContainer = null;
   #pointsModel = null;
   #filterModel = null;
+
+  #pointPresenters = new Map();
 
   constructor({boardContainer, pointsModel, filterModel}) {
     this.#boardContainer = boardContainer;
@@ -47,6 +50,7 @@ export default class BoardPresenter {
     });
 
     pointPresenter.init(point);
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
 
   // Собирает массив точек с учетом текущей фильтрации
@@ -59,5 +63,11 @@ export default class BoardPresenter {
   #renderNoPointsMessage() {
     const noPointsComponent = new NoPointsView({currentFilter: this.#filterModel.currentFilter});
     render(noPointsComponent, this.#boardContainer);
+  }
+
+  // Очищает доску от точек
+  #clearPointList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
   }
 }

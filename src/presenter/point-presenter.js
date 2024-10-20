@@ -27,7 +27,7 @@ export default class PointPresenter {
     this.#pointFormComponent = this.#createPointFormView();
 
     if (prevPointComponent === null || prevPointFormComponent === null) {
-      render(this.#pointComponent, this.#pointContainerElement.element);
+      render(this.#pointComponent, this.#pointContainerElement);
       return;
     }
 
