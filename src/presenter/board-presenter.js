@@ -1,4 +1,5 @@
 import {pointsFilter} from '../utils/filter';
+import {updateItem} from '../utils/common';
 import {render} from '../framework/render';
 import PointSortingPanelView from '../view/point-sorting-panel-view';
 import PointListView from '../view/point-list-view';
@@ -44,9 +45,9 @@ export default class BoardPresenter {
   // Создает презентер точки и запускает рендер
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
-      point,
       pointsModel: this.#pointsModel,
-      pointContainer: this.#pointListComponent.element
+      pointContainer: this.#pointListComponent.element,
+      onDataChange: this.#handleTaskChange
     });
 
     pointPresenter.init(point);
@@ -64,6 +65,11 @@ export default class BoardPresenter {
     const noPointsComponent = new NoPointsView({currentFilter: this.#filterModel.currentFilter});
     render(noPointsComponent, this.#boardContainer);
   }
+
+  #handleTaskChange = (updatedPoint) => {
+    this.#pointsModel.points = updateItem(this.#pointsModel.points, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
 
   // Очищает доску от точек
   #clearPointList() {

@@ -6,14 +6,16 @@ import PointCardView from '../view/point-card-view';
 export default class PointPresenter {
   #pointsModel = null;
   #pointContainerElement = null;
+  #handleDataChange = () => {};
 
   #point = null;
   #pointComponent = null;
   #pointFormComponent = null;
 
-  constructor({pointsModel, pointContainer}) {
+  constructor({pointsModel, pointContainer, onDataChange}) {
     this.#pointsModel = pointsModel;
     this.#pointContainerElement = pointContainer;
+    this.#handleDataChange = onDataChange;
   }
 
   // Рендерит точку
@@ -59,6 +61,7 @@ export default class PointPresenter {
       point: this.#point,
       offers,
       destination,
+      onFavoriteClick: this.#handleFavoriteClick,
       onEditClick: this.#handleEditClick
     });
   }
@@ -94,6 +97,10 @@ export default class PointPresenter {
     }
   };
 
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+  };
+
   #handleEditClick = () => {
     this.#replaceCardToForm();
   };
@@ -102,7 +109,8 @@ export default class PointPresenter {
     this.#replaceFormToCard();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(point);
     this.#replaceFormToCard();
   };
 }
