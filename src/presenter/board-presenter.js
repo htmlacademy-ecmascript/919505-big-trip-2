@@ -134,14 +134,14 @@ export default class BoardPresenter {
     this.#currentSortType = sortType;
     this.#sortPoints();
 
-    // - Очищаем список
+    // Очищаем список
     this.#clearPointList();
 
     // Заново отрисовываем панель сортировки
     remove(this.#sortComponent);
     this.#renderSort();
 
-    // - Рендерим список заново
+    // Рендерим список заново
     this.#renderPoints();
   };
 }
