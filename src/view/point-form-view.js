@@ -212,7 +212,7 @@ export default class PointFormView extends AbstractView {
     this.#handleCloseButtonClick = onCloseButtonClick;
     this.#handleFormSubmit = onFormSubmit;
 
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#CloseButtonClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeButtonClickHandler);
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
@@ -220,12 +220,12 @@ export default class PointFormView extends AbstractView {
     return createPointFormTemplate(this.#point, this.#offers, this.#destinations);
   }
 
-  #CloseButtonClickHandler = () => {
+  #closeButtonClickHandler = () => {
     this.#handleCloseButtonClick();
   };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#point);
   };
 }

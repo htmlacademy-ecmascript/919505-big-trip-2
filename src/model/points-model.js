@@ -11,6 +11,10 @@ export default class PointsModel {
     return this.#points;
   }
 
+  set points(points) {
+    this.#points = points;
+  }
+
   get destinations() {
     return this.#destinations;
   }
