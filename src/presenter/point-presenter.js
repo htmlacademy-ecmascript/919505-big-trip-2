@@ -1,29 +1,53 @@
-import {render, replace} from '../framework/render';
+import {render, replace, remove} from '../framework/render';
 import {KeyCode} from '../const';
 import PointFormView from '../view/point-form-view';
 import PointCardView from '../view/point-card-view';
 
 export default class PointPresenter {
   #pointsModel = null;
-  #containerComponent = null;
+  #pointContainerElement = null;
 
   #point = null;
   #pointComponent = null;
   #pointFormComponent = null;
 
-  constructor({pointsModel, containerComponent}) {
+  constructor({pointsModel, pointContainer}) {
     this.#pointsModel = pointsModel;
-    this.#containerComponent = containerComponent;
+    this.#pointContainerElement = pointContainer;
   }
 
   // Рендерит точку
   init(point) {
     this.#point = point;
 
+    const prevPointComponent = this.#pointComponent;
+    const prevPointFormComponent = this.#pointFormComponent;
+
     this.#pointComponent = this.#createPointCardView();
     this.#pointFormComponent = this.#createPointFormView();
 
-    render(this.#pointComponent, this.#containerComponent.element);
+    if (prevPointComponent === null || prevPointFormComponent === null) {
+      render(this.#pointComponent, this.#pointContainerElement.element);
+      return;
+    }
+
+    // Проверка на наличие в DOM необходима,
+    // чтобы не пытаться заменить то, что не было отрисовано
+    if (this.#pointContainerElement.contains(prevPointComponent.element)) {
+      replace(this.#pointComponent, prevPointComponent);
+    }
+
+    if (this.#pointContainerElement.contains(prevPointFormComponent.element)) {
+      replace(this.#pointFormComponent, prevPointFormComponent);
+    }
+
+    remove(prevPointComponent);
+    remove(prevPointFormComponent);
+  }
+
+  destroy() {
+    remove(this.#pointComponent);
+    remove(this.#pointFormComponent);
   }
 
   // Возвращает новый экземпляр карточки точки
