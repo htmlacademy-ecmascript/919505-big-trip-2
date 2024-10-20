@@ -51,7 +51,7 @@ export default class BoardPresenter {
     this.#renderPoints();
   }
 
-  //
+  // Рендерит панель сортировки
   #renderSort() {
     this.#sortComponent = new PointSortingPanelView({
       currentSortType: this.#currentSortType,
