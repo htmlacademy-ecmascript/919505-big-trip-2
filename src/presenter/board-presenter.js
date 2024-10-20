@@ -46,7 +46,7 @@ export default class BoardPresenter {
       containerComponent: this.#pointListComponent
     });
 
-    pointPresenter.init();
+    pointPresenter.init(point);
   }
 
   // Собирает массив точек с учетом текущей фильтрации
