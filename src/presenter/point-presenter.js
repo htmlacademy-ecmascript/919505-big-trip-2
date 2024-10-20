@@ -3,19 +3,28 @@ import {KeyCode} from '../const';
 import PointFormView from '../view/point-form-view';
 import PointCardView from '../view/point-card-view';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export default class PointPresenter {
   #pointsModel = null;
   #pointContainerElement = null;
   #handleDataChange = () => {};
+  #handleModeChange = () => {};
 
   #point = null;
   #pointComponent = null;
   #pointFormComponent = null;
 
-  constructor({pointsModel, pointContainer, onDataChange}) {
+  #mode = Mode.DEFAULT;
+
+  constructor({pointsModel, pointContainer, onDataChange, onModeChange}) {
     this.#pointsModel = pointsModel;
     this.#pointContainerElement = pointContainer;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   // Рендерит точку
@@ -33,13 +42,11 @@ export default class PointPresenter {
       return;
     }
 
-    // Проверка на наличие в DOM необходима,
-    // чтобы не пытаться заменить то, что не было отрисовано
-    if (this.#pointContainerElement.contains(prevPointComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#pointContainerElement.contains(prevPointFormComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#pointFormComponent, prevPointFormComponent);
     }
 
@@ -50,6 +57,12 @@ export default class PointPresenter {
   destroy() {
     remove(this.#pointComponent);
     remove(this.#pointFormComponent);
+  }
+
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToCard();
+    }
   }
 
   // Возвращает новый экземпляр карточки точки
@@ -83,11 +96,14 @@ export default class PointPresenter {
   #replaceCardToForm() {
     replace(this.#pointFormComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #replaceFormToCard() {
     replace(this.#pointComponent, this.#pointFormComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
   }
 
   #escKeyDownHandler = (evt) => {
