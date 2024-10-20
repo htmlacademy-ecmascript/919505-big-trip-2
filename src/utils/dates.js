@@ -23,15 +23,15 @@ const DateFormat = {
   MM: 'mm',
 };
 
-function humanizePointDate (pointDate, format = DateFormat.YYYY_MM_DD) {
+function humanizePointDate(pointDate, format = DateFormat.YYYY_MM_DD) {
   return pointDate ? dayjs(pointDate).format(format) : '';
 }
 
-function humanizePointHours (pointDate) {
+function humanizePointHours(pointDate) {
   return pointDate ? `${dayjs(pointDate).format(DateFormat.HH)}:${dayjs(pointDate).format(DateFormat.MM)}` : '';
 }
 
-function humanizePointDateTime (pointDateTime) {
+function humanizePointDateTime(pointDateTime) {
   const humanizedDate = dayjs(pointDateTime).format(DateFormat.YY_MM_DD);
   const humanizedHours = dayjs(pointDateTime).format(DateFormat.HH);
   const humanizedMinutes = dayjs(pointDateTime).format(DateFormat.MM);
@@ -39,7 +39,7 @@ function humanizePointDateTime (pointDateTime) {
   return `${humanizedDate}&nbsp;${humanizedHours}:${humanizedMinutes}`;
 }
 
-function humanizeTimeDifference (dateFrom, dateTo) {
+function humanizeTimeDifference(dateFrom, dateTo) {
   let difference = '';
   const start = dayjs(dateFrom);
   const finish = dayjs(dateTo);
@@ -82,7 +82,7 @@ function humanizeTimeDifference (dateFrom, dateTo) {
   return difference;
 }
 
-function getMinMaxDates (points) {
+function getMinMaxDates(points) {
   let dateFrom = null;
   let dateTo = null;
 
@@ -107,7 +107,7 @@ function getMinMaxDates (points) {
   return {dateFrom, dateTo};
 }
 
-function humanizeTripTimeInterval (points) {
+function humanizeTripTimeInterval(points) {
   const {dateFrom, dateTo} = getMinMaxDates(points);
 
   const monthFrom = dayjs(dateFrom).format(DateFormat.MMM);
@@ -120,4 +120,31 @@ function humanizeTripTimeInterval (points) {
   return `${dayjs(dateFrom).format(DateFormat.DD_MMM)}&nbsp;&mdash;&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
 }
 
-export {humanizePointDate, humanizePointHours, humanizeTimeDifference, humanizePointDateTime, humanizeTripTimeInterval, getMinMaxDates, DateFormat};
+function compareDates(date1, date2) {
+  return dayjs(date1).isAfter(dayjs(date2)) ? 1 : -1;
+}
+
+function compareDurations(dateFrom1, dateFrom2, dateTo1, dateTo2) {
+  const start1 = dayjs(dateFrom1);
+  const finish1 = dayjs(dateTo1);
+
+  const start2 = dayjs(dateFrom2);
+  const finish2 = dayjs(dateTo2);
+
+  const differenceInMilliSeconds1 = finish1.diff(start1);
+  const differenceInMilliSeconds2 = finish2.diff(start2);
+
+  return differenceInMilliSeconds1 < differenceInMilliSeconds2 ? 1 : -1;
+}
+
+export {
+  humanizePointDate,
+  humanizePointHours,
+  humanizeTimeDifference,
+  humanizePointDateTime,
+  humanizeTripTimeInterval,
+  getMinMaxDates,
+  compareDates,
+  compareDurations,
+  DateFormat,
+};
