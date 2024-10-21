@@ -2,6 +2,14 @@ const KeyCode = {
   ESCAPE: 'Escape'
 };
 
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFER: 'offer',
+};
+
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
@@ -22,4 +30,4 @@ const BLANK_POINT = {
   offers: []
 };
 
-export {KeyCode, FilterType, POINT_TYPES, BLANK_POINT};
+export {KeyCode, SortType, FilterType, POINT_TYPES, BLANK_POINT};

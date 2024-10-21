@@ -65,6 +65,8 @@ export default class PointPresenter {
     }
   }
 
+  // ============= ЭКЗЕМПЛЯРЫ КАРТОЧКИ И ФОРМЫ =============
+
   // Возвращает новый экземпляр карточки точки
   #createPointCardView() {
     const offers = this.#pointsModel.getChosenPointOffers(this.#point.type, this.#point.offers);
@@ -93,6 +95,8 @@ export default class PointPresenter {
     });
   }
 
+  // ============= ПЕРЕКЛЮЧЕНИЕ РЕЖИМА ОТОБРАЖЕНИЯ =============
+
   #replaceCardToForm() {
     replace(this.#pointFormComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -113,6 +117,8 @@ export default class PointPresenter {
     }
   };
 
+  // ============= КОЛЛБЭКИ ДЛЯ КАРТОЧКИ =============
+
   #handleFavoriteClick = () => {
     this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
   };
@@ -120,6 +126,8 @@ export default class PointPresenter {
   #handleEditClick = () => {
     this.#replaceCardToForm();
   };
+
+  // ============= КОЛЛБЭКИ ДЛЯ ФОРМЫ =============
 
   #handleCloseFormButton = () => {
     this.#replaceFormToCard();

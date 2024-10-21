@@ -20,7 +20,7 @@ const mockPoints = [
     dateFrom: '2024-08-24T08:30:00.845Z',
     dateTo: '2024-09-01T12:00:00.375Z',
     destination: '2',
-    isFavorite: false,
+    isFavorite: true,
     offers: []
   },
 
