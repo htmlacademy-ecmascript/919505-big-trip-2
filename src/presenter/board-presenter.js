@@ -36,6 +36,8 @@ export default class BoardPresenter {
     this.#renderBoard();
   }
 
+  // ============= РЕНДЕР ОСНОВНЫХ КОМПОНЕНТОВ =============
+
   // Рендерит доску
   #renderBoard() {
     // Ставим заглушку, если нет точек для отрисовки
@@ -83,28 +85,35 @@ export default class BoardPresenter {
     render(noPointsComponent, this.#boardContainer);
   }
 
-  // Сбрасывает режим отображения точки
-  #handleModeChange = () => {
-    this.#pointPresenters.forEach((presenter) => presenter.resetView());
-  };
-
-  #handlePointChange = (updatedPoint) => {
-    this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
-    this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-  };
-
   // Очищает доску от точек
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
   }
 
+  // ============= КОЛЛБЭКИ ДЛЯ ТОЧЕК =============
+
+  // Сбрасывает режим отображения точки
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
+  // Обновляет данные по точке, перерисовывает её
+  #handlePointChange = (updatedPoint) => {
+    this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
+    this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  // ============= ФИЛЬТРАЦИЯ ТОЧЕК =============
+
   // Фильтрует точки с учетом текущей фильтрации
   #filterPoints() {
     const currentFilter = this.#filterModel.currentFilter;
     this.#boardPoints = pointsFilter[currentFilter](this.#boardPoints);
   }
+
+  // ============= СОРТИРОВКА ТОЧЕК =============
 
   // Сортирует точки по текущему типу сортировки
   #sortPoints() {
@@ -126,6 +135,7 @@ export default class BoardPresenter {
     }
   }
 
+  // Обновляет тип сортировки, перерисовывает панель сортировки и список точек
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
