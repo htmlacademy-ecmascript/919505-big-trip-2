@@ -62,6 +62,12 @@ export default class BoardPresenter {
     render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   }
 
+  // Перерисовывает панель сортировки
+  #redrawSort() {
+    remove(this.#sortComponent);
+    this.#renderSort();
+  }
+
   #renderPoints() {
     this.#boardPoints.forEach((point) => this.#renderPoint(point));
   }
@@ -86,9 +92,15 @@ export default class BoardPresenter {
   }
 
   // Очищает доску от точек
-  #clearPointList() {
+  #clearAllPoints() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+  }
+
+  // Перерисовывает все точки
+  #redrawPoints() {
+    this.#clearAllPoints();
+    this.#renderPoints();
   }
 
   // ============= КОЛЛБЭКИ ДЛЯ ТОЧЕК =============
@@ -144,14 +156,7 @@ export default class BoardPresenter {
     this.#currentSortType = sortType;
     this.#sortPoints();
 
-    // Очищаем список
-    this.#clearPointList();
-
-    // Заново отрисовываем панель сортировки
-    remove(this.#sortComponent);
-    this.#renderSort();
-
-    // Заново рендерим список точек
-    this.#renderPoints();
+    this.#redrawSort();
+    this.#redrawPoints();
   };
 }
