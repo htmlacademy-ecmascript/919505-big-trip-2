@@ -10,6 +10,7 @@ import PointPresenter from './point-presenter';
 
 export default class BoardPresenter {
   #pointListComponent = new PointListView();
+  #noPointsComponent = null;
 
   #boardPoints = [];
 
@@ -46,10 +47,10 @@ export default class BoardPresenter {
       return;
     }
 
-    this.#renderSort();
     this.#sortPoints();
-    render(this.#pointListComponent, this.#boardContainer);
 
+    this.#renderSort();
+    render(this.#pointListComponent, this.#boardContainer);
     this.#renderPoints();
   }
 
@@ -60,12 +61,6 @@ export default class BoardPresenter {
       onSortTypeChange: this.#handleSortTypeChange
     });
     render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
-  }
-
-  // Перерисовывает панель сортировки
-  #redrawSort() {
-    remove(this.#sortComponent);
-    this.#renderSort();
   }
 
   #renderPoints() {
@@ -87,20 +82,19 @@ export default class BoardPresenter {
 
   // Рендерит заглушку при отсутствии точек
   #renderNoPointsMessage() {
-    const noPointsComponent = new NoPointsView({currentFilter: this.#filterModel.currentFilter});
-    render(noPointsComponent, this.#boardContainer);
+    this.#noPointsComponent = new NoPointsView({currentFilter: this.#filterModel.currentFilter});
+    render(this.#noPointsComponent, this.#boardContainer);
   }
 
-  // Очищает доску от точек
-  #clearAllPoints() {
+  // Очищает доску
+  #clearBoard() {
+    remove(this.#sortComponent);
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
-  }
 
-  // Перерисовывает все точки
-  #redrawPoints() {
-    this.#clearAllPoints();
-    this.#renderPoints();
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
   }
 
   // ============= КОЛЛБЭКИ ДЛЯ ТОЧЕК =============
@@ -132,16 +126,15 @@ export default class BoardPresenter {
     this.#boardPoints.sort(pointsSort[this.#currentSortType]);
   }
 
-  // Обновляет тип сортировки, перерисовывает панель сортировки и список точек
+  // Обновляет тип сортировки, перерисовывает доску
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
 
     this.#currentSortType = sortType;
-    this.#sortPoints();
 
-    this.#redrawSort();
-    this.#redrawPoints();
+    this.#clearBoard();
+    this.#renderBoard();
   };
 }
