@@ -2,6 +2,11 @@ import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDateTime} from '../utils/dates';
 import {POINT_TYPES} from '../const';
 
+const ResetButtonTitle = {
+  CANCEL: 'Cancel',
+  DELETE: 'Delete',
+};
+
 function createPointTypeItem(pointId, pointType, currentPointType) {
   const isChecked = pointType === currentPointType ? 'checked' : '';
   return (
@@ -188,7 +193,7 @@ function createPointFormTemplate(point, offers, destinations) {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Cancel</button>
+          <button class="event__reset-btn" type="reset">${point.id ? ResetButtonTitle.DELETE : ResetButtonTitle.CANCEL}</button>
           ${rollupTemplate}
         </header>
         ${detailsSectionTemplate}
@@ -212,7 +217,12 @@ export default class PointFormView extends AbstractView {
     this.#handleCloseButtonClick = onCloseButtonClick;
     this.#handleFormSubmit = onFormSubmit;
 
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeButtonClickHandler);
+    const rollupButtonElement = this.element.querySelector('.event__rollup-btn');
+
+    if (rollupButtonElement) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeButtonClickHandler);
+    }
+
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 

@@ -53,18 +53,24 @@ function generateTripValue (points, offers) {
   return tripValue;
 }
 
-function createTripInfoTemplate(points, destinations, offers) {
+function createCitiesAndDatesTemplate(points, destinations) {
   const title = generateTitle(points, destinations);
-  const tripValue = generateTripValue(points, offers);
   const timeInterval = humanizeTripTimeInterval(points);
 
   return (
-    `<section class="trip-main__trip-info  trip-info">
-      <div class="trip-info__main">
-        <h1 class="trip-info__title">${title}</h1>
-        <p class="trip-info__dates">${timeInterval}</p>
-      </div>
+    `<div class="trip-info__main">
+      <h1 class="trip-info__title">${title}</h1>
+      <p class="trip-info__dates">${timeInterval}</p>
+    </div>`
+  );
+}
 
+function createTripInfoTemplate(points, destinations, offers) {
+  const tripValue = generateTripValue(points, offers);
+
+  return (
+    `<section class="trip-main__trip-info  trip-info">
+      ${points.length > 0 ? createCitiesAndDatesTemplate(points, destinations) : ''}
       <p class="trip-info__cost">
         Total: &euro;&nbsp;<span class="trip-info__cost-value">${tripValue}</span>
       </p>
