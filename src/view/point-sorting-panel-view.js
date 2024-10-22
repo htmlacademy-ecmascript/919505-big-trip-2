@@ -1,11 +1,13 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {SortType} from '../const';
 
+const DISABLED_SORT_TYPES = [SortType.EVENT, SortType.OFFER];
+
 function createSortItemTemplate (currentSortType, sortingType) {
   let isDisabled = '';
   const isChecked = sortingType === currentSortType ? 'checked' : '';
 
-  if (sortingType === SortType.EVENT || sortingType === SortType.OFFER) {
+  if (DISABLED_SORT_TYPES.includes(sortingType)) {
     isDisabled = 'disabled';
   }
 
