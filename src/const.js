@@ -2,6 +2,14 @@ const KeyCode = {
   ESCAPE: 'Escape'
 };
 
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFER: 'offer',
+};
+
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
@@ -12,7 +20,7 @@ const FilterType = {
 const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const BLANK_POINT = {
-  id: '0',
+  id: null,
   type: 'flight',
   basePrice: 0,
   dateFrom: '',
@@ -22,4 +30,4 @@ const BLANK_POINT = {
   offers: []
 };
 
-export {KeyCode, FilterType, POINT_TYPES, BLANK_POINT};
+export {KeyCode, SortType, FilterType, POINT_TYPES, BLANK_POINT};

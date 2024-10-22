@@ -1,70 +1,27 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {humanizeTripTimeInterval, getMinMaxDates} from '../utils/dates';
+import {humanizeTripTimeInterval} from '../utils/dates';
+import {generateTitle, generateTripValue} from '../utils/trip-info';
 
-function getDestinationName (destinations, destinationId) {
-  return destinations.find((destination) => destination.id === destinationId).name;
-}
+const MAIN_TITLE_PLACEHOLDER = 'Big Trip';
 
-function generateTitle (points, destinations) {
-  const {dateFrom, dateTo} = getMinMaxDates(points);
+function createDatesTemplate(points) {
+  const timeInterval = humanizeTripTimeInterval(points);
 
-  if (!points.length) {
-    return '';
-  }
-
-  if (points.length === 1) {
-    return getDestinationName(destinations, points[0].destination);
-  }
-
-  const firstPoint = points.find((point) => point.dateFrom === dateFrom);
-  const lastPoint = points.find((point) => point.dateTo === dateTo);
-
-  const firstDestinationName = getDestinationName(destinations, firstPoint.destination);
-  const lastDestinationName = getDestinationName(destinations, lastPoint.destination);
-
-
-  if (points.length > 3) {
-    return `${firstDestinationName}-...-${lastDestinationName}`;
-  }
-
-  const middlePoint = points.find((point) => point.dateFrom !== dateFrom && point.dateTo !== dateTo);
-
-  if (middlePoint) {
-    const middleDestinationName = getDestinationName(destinations, middlePoint.destination);
-    return `${firstDestinationName}-${middleDestinationName}-${lastDestinationName}`;
-  }
-
-  return `${firstDestinationName}-${lastDestinationName}`;
-}
-
-function generateTripValue (points, offers) {
-  let tripValue = 0;
-
-  points.forEach((point) => {
-    tripValue += point.basePrice;
-
-    const currentOffersObject = offers.find((offer) => offer.type === point.type);
-
-    point.offers.forEach((chosenOfferId) => {
-      tripValue += currentOffersObject.offers.find((offer) => offer.id === chosenOfferId).price;
-    });
-  });
-
-  return tripValue;
+  return (
+    `<p class="trip-info__dates">${timeInterval}</p>`
+  );
 }
 
 function createTripInfoTemplate(points, destinations, offers) {
-  const title = generateTitle(points, destinations);
+  const title = points.length > 0 ? generateTitle(points, destinations) : MAIN_TITLE_PLACEHOLDER;
   const tripValue = generateTripValue(points, offers);
-  const timeInterval = humanizeTripTimeInterval(points);
 
   return (
     `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
         <h1 class="trip-info__title">${title}</h1>
-        <p class="trip-info__dates">${timeInterval}</p>
+        ${points.length > 0 ? createDatesTemplate(points) : ''}
       </div>
-
       <p class="trip-info__cost">
         Total: &euro;&nbsp;<span class="trip-info__cost-value">${tripValue}</span>
       </p>

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
 const TimeThreshold = {
+  ZERO: 0,
   SIXTY: 60,
   TEN: 10
 };
@@ -23,15 +24,15 @@ const DateFormat = {
   MM: 'mm',
 };
 
-function humanizePointDate (pointDate, format = DateFormat.YYYY_MM_DD) {
+function humanizePointDate(pointDate, format = DateFormat.YYYY_MM_DD) {
   return pointDate ? dayjs(pointDate).format(format) : '';
 }
 
-function humanizePointHours (pointDate) {
+function humanizePointHours(pointDate) {
   return pointDate ? `${dayjs(pointDate).format(DateFormat.HH)}:${dayjs(pointDate).format(DateFormat.MM)}` : '';
 }
 
-function humanizePointDateTime (pointDateTime) {
+function humanizePointDateTime(pointDateTime) {
   const humanizedDate = dayjs(pointDateTime).format(DateFormat.YY_MM_DD);
   const humanizedHours = dayjs(pointDateTime).format(DateFormat.HH);
   const humanizedMinutes = dayjs(pointDateTime).format(DateFormat.MM);
@@ -39,7 +40,7 @@ function humanizePointDateTime (pointDateTime) {
   return `${humanizedDate}&nbsp;${humanizedHours}:${humanizedMinutes}`;
 }
 
-function humanizeTimeDifference (dateFrom, dateTo) {
+function humanizeTimeDifference(dateFrom, dateTo) {
   let difference = '';
   const start = dayjs(dateFrom);
   const finish = dayjs(dateTo);
@@ -73,7 +74,7 @@ function humanizeTimeDifference (dateFrom, dateTo) {
     minutes = Math.ceil(differenceInMilliSeconds / MillisecondQuantity.MINUTE);
   }
 
-  if ((minutes === 0 || minutes === TimeThreshold.SIXTY) && hours) {
+  if ((minutes === TimeThreshold.ZERO || minutes === TimeThreshold.SIXTY) && hours) {
     difference += '00M';
   } else {
     difference += `${minutes < TimeThreshold.TEN ? '0' : ''}${minutes}M`;
@@ -82,7 +83,7 @@ function humanizeTimeDifference (dateFrom, dateTo) {
   return difference;
 }
 
-function getMinMaxDates (points) {
+function getMinMaxDates(points) {
   let dateFrom = null;
   let dateTo = null;
 
@@ -107,7 +108,7 @@ function getMinMaxDates (points) {
   return {dateFrom, dateTo};
 }
 
-function humanizeTripTimeInterval (points) {
+function humanizeTripTimeInterval(points) {
   const {dateFrom, dateTo} = getMinMaxDates(points);
 
   const monthFrom = dayjs(dateFrom).format(DateFormat.MMM);
@@ -120,4 +121,12 @@ function humanizeTripTimeInterval (points) {
   return `${dayjs(dateFrom).format(DateFormat.DD_MMM)}&nbsp;&mdash;&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
 }
 
-export {humanizePointDate, humanizePointHours, humanizeTimeDifference, humanizePointDateTime, humanizeTripTimeInterval, getMinMaxDates, DateFormat};
+export {
+  humanizePointDate,
+  humanizePointHours,
+  humanizeTimeDifference,
+  humanizePointDateTime,
+  humanizeTripTimeInterval,
+  getMinMaxDates,
+  DateFormat,
+};

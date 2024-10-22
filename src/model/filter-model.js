@@ -1,5 +1,4 @@
 import {FilterType} from '../const.js';
-import {pointsFilter} from '../utils/filter';
 
 export default class FilterModel {
   #currentFilter = FilterType.EVERYTHING;
@@ -10,14 +9,5 @@ export default class FilterModel {
 
   get currentFilter() {
     return this.#currentFilter;
-  }
-
-  getFilters(points) {
-    return Object.entries(pointsFilter).map(
-      ([filterType, filterPoints]) => ({
-        type: filterType,
-        count: filterPoints(points).length,
-      }),
-    );
   }
 }
