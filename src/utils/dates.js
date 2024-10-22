@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
 const TimeThreshold = {
+  ZERO: 0,
   SIXTY: 60,
   TEN: 10
 };
@@ -73,7 +74,7 @@ function humanizeTimeDifference(dateFrom, dateTo) {
     minutes = Math.ceil(differenceInMilliSeconds / MillisecondQuantity.MINUTE);
   }
 
-  if ((minutes === 0 || minutes === TimeThreshold.SIXTY) && hours) {
+  if ((minutes === TimeThreshold.ZERO || minutes === TimeThreshold.SIXTY) && hours) {
     difference += '00M';
   } else {
     difference += `${minutes < TimeThreshold.TEN ? '0' : ''}${minutes}M`;
