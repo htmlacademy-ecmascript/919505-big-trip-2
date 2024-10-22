@@ -19,6 +19,7 @@ export default class BoardPresenter {
   #filterModel = null;
 
   #pointPresenters = new Map();
+  #currentlyOpenedFormId = null;
 
   #sortComponent = null;
   #currentSortType = SortType.DAY;
@@ -73,7 +74,8 @@ export default class BoardPresenter {
       pointsModel: this.#pointsModel,
       pointContainer: this.#pointListComponent.element,
       onDataChange: this.#handlePointChange,
-      onModeChange: this.#handleModeChange
+      onFormOpen: this.#handleFormOpen,
+      onFormClose: this.#handleFormClose
     });
 
     pointPresenter.init(point);
@@ -99,16 +101,27 @@ export default class BoardPresenter {
 
   // ============= КОЛЛБЭКИ ДЛЯ ТОЧЕК =============
 
-  // Сбрасывает режим отображения точки
-  #handleModeChange = () => {
-    this.#pointPresenters.forEach((presenter) => presenter.resetView());
-  };
-
   // Обновляет данные по точке, перерисовывает её
   #handlePointChange = (updatedPoint) => {
     this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
     this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  // Проверяет, не открыта ли в данный момент форма у другой карточки
+  // Если открыта, сбрасывает режим отображения для старой карточки
+  // Запоминает, у какой карточки сейчас открыта форма
+  #handleFormOpen = (newFormId) => {
+    if (this.#currentlyOpenedFormId) {
+      this.#pointPresenters.get(this.#currentlyOpenedFormId).resetView();
+    }
+
+    this.#currentlyOpenedFormId = newFormId;
+  };
+
+  // Сбрасывает ID формы в случае её закрытия
+  #handleFormClose = () => {
+    this.#currentlyOpenedFormId = null;
   };
 
   // ============= ФИЛЬТРАЦИЯ ТОЧЕК =============
