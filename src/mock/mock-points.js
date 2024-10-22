@@ -56,7 +56,7 @@ const mockPoints = [
     type: 'check-in',
     basePrice: 300,
     dateFrom: '2024-10-04T14:15:00.845Z',
-    dateTo: '2024-10-06T19:30:00.375Z',
+    dateTo: '2024-10-06T19:35:00.375Z',
     destination: '6',
     isFavorite: false,
     offers: [
