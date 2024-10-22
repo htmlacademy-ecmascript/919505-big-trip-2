@@ -120,23 +120,6 @@ function humanizeTripTimeInterval(points) {
   return `${dayjs(dateFrom).format(DateFormat.DD_MMM)}&nbsp;&mdash;&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
 }
 
-function compareDates(date1, date2) {
-  return dayjs(date1).isAfter(dayjs(date2)) ? 1 : -1;
-}
-
-function compareDurations(dateFrom1, dateFrom2, dateTo1, dateTo2) {
-  const start1 = dayjs(dateFrom1);
-  const finish1 = dayjs(dateTo1);
-
-  const start2 = dayjs(dateFrom2);
-  const finish2 = dayjs(dateTo2);
-
-  const differenceInMilliSeconds1 = finish1.diff(start1);
-  const differenceInMilliSeconds2 = finish2.diff(start2);
-
-  return differenceInMilliSeconds1 < differenceInMilliSeconds2 ? 1 : -1;
-}
-
 export {
   humanizePointDate,
   humanizePointHours,
@@ -144,7 +127,5 @@ export {
   humanizePointDateTime,
   humanizeTripTimeInterval,
   getMinMaxDates,
-  compareDates,
-  compareDurations,
   DateFormat,
 };

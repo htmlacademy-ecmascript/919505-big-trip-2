@@ -1,12 +1,12 @@
+import {SortType} from '../const.js';
 import {pointsFilter} from '../utils/filter';
+import {pointsSort} from '../utils/sort';
 import {updateItem} from '../utils/common';
-import {compareDates, compareDurations} from '../utils/dates';
 import {render, remove, RenderPosition} from '../framework/render';
 import PointSortingPanelView from '../view/point-sorting-panel-view';
 import PointListView from '../view/point-list-view';
 import NoPointsView from '../view/no-points-view';
 import PointPresenter from './point-presenter';
-import {SortType} from '../const.js';
 
 export default class BoardPresenter {
   #pointListComponent = new PointListView();
@@ -129,22 +129,7 @@ export default class BoardPresenter {
 
   // Сортирует точки по текущему типу сортировки
   #sortPoints() {
-    switch (this.#currentSortType) {
-      case SortType.DAY:
-        this.#boardPoints.sort((a, b) => compareDates(a.dateFrom, b.dateFrom));
-        break;
-
-      case SortType.TIME:
-        this.#boardPoints.sort((a, b) => compareDurations(a.dateFrom, a.dateTo, b.dateFrom, b.dateTo));
-        break;
-
-      case SortType.PRICE:
-        this.#boardPoints.sort((a, b) => b.basePrice - a.basePrice);
-        break;
-
-      default:
-        this.#boardPoints = [...this.#sourcedBoardPoints];
-    }
+    this.#boardPoints.sort(pointsSort[this.#currentSortType]);
   }
 
   // Обновляет тип сортировки, перерисовывает панель сортировки и список точек
