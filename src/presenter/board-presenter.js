@@ -12,18 +12,17 @@ export default class BoardPresenter {
   #pointListComponent = new PointListView();
   #noPointsComponent = null;
 
-  #boardPoints = [];
-
   #boardContainer = null;
   #pointsModel = null;
   #filterModel = null;
 
-  #pointPresenters = new Map();
-  #currentlyOpenedFormId = null;
-
   #sortComponent = null;
   #currentSortType = SortType.DAY;
-  #sourcedBoardPoints = [];
+
+  #boardPoints = [];
+
+  #pointPresenters = new Map();
+  #currentlyOpenedFormId = null;
 
   constructor({boardContainer, pointsModel, filterModel}) {
     this.#boardContainer = boardContainer;
@@ -33,7 +32,6 @@ export default class BoardPresenter {
 
   init() {
     this.#boardPoints = [...this.#pointsModel.points];
-    this.#sourcedBoardPoints = [...this.#pointsModel.points];
 
     this.#renderBoard();
   }
@@ -104,7 +102,6 @@ export default class BoardPresenter {
   // Обновляет данные по точке, перерисовывает её
   #handlePointChange = (updatedPoint) => {
     this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
-    this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   };
 
