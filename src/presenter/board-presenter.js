@@ -151,7 +151,7 @@ export default class BoardPresenter {
     remove(this.#sortComponent);
     this.#renderSort();
 
-    // Рендерим список заново
+    // Заново рендерим список точек
     this.#renderPoints();
   };
 }
