@@ -267,16 +267,15 @@ export default class PointFormView extends AbstractStatefulView {
   };
 
   #pointOfferChangeHandler = (evt) => {
-    let newOffers = this._state.offers;
+    let currentOffers = this._state.offers;
 
     if (evt.target.checked) {
-      newOffers.push(evt.target.dataset.offerId);
-      this.updateElement({offers: newOffers});
+      currentOffers.push(evt.target.dataset.offerId);
     } else {
-      newOffers = newOffers.filter((offer) => offer !== evt.target.dataset.offerId);
+      currentOffers = currentOffers.filter((offer) => offer !== evt.target.dataset.offerId);
     }
 
-    this.updateElement({offers: newOffers});
+    this.updateElement({offers: currentOffers});
   };
 
 
