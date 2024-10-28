@@ -89,12 +89,17 @@ export default class BoardPresenter {
   // Очищает доску
   #clearBoard() {
     remove(this.#sortComponent);
-    this.#pointPresenters.forEach((presenter) => presenter.destroy());
-    this.#pointPresenters.clear();
+    this.#clearPoints();
 
     if (this.#noPointsComponent) {
       remove(this.#noPointsComponent);
     }
+  }
+
+  // Удаляет все точки
+  #clearPoints() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
   }
 
   // ============= КОЛЛБЭКИ ДЛЯ ТОЧЕК =============
@@ -102,7 +107,9 @@ export default class BoardPresenter {
   // Обновляет данные по точке, перерисовывает её
   #handlePointChange = (updatedPoint) => {
     this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+    this.#sortPoints();
+    this.#clearPoints();
+    this.#renderPoints();
   };
 
   // Проверяет, не открыта ли в данный момент форма у другой карточки

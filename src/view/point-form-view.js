@@ -35,11 +35,15 @@ function createRollupItem() {
 
 function createOffer(offer, checkedOffers, pointId) {
   const {id, title, price} = offer;
-  const isChecked = checkedOffers.includes(offer.id) ? 'checked' : '';
+  let isChecked = '';
+
+  if (checkedOffers && checkedOffers.includes(offer.id)) {
+    isChecked = 'checked';
+  }
 
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${pointId}-${id}" type="checkbox" name="event-offer-${title}" ${isChecked}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${pointId}-${id}" type="checkbox" name="event-offer-${title}" data-offer-id=${id} ${isChecked}>
       <label class="event__offer-label" for="event-offer-${pointId}-${id}">
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
@@ -228,14 +232,12 @@ export default class PointFormView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    const rollupButtonElement = this.element.querySelector('.event__rollup-btn');
-
-    if (rollupButtonElement) {
-      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeButtonClickHandler);
-    }
-
+    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#closeButtonClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeButtonClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#pointPriceChangeHandler);
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#pointOfferChangeHandler);
     this.element.querySelector('.event__save-btn').addEventListener('click', this.#formSubmitHandler);
   }
 
@@ -259,6 +261,24 @@ export default class PointFormView extends AbstractStatefulView {
       this.updateElement({destination: newDestination.id});
     }
   };
+
+  #pointPriceChangeHandler = (evt) => {
+    this.updateElement({basePrice: evt.target.value});
+  };
+
+  #pointOfferChangeHandler = (evt) => {
+    let newOffers = this._state.offers;
+
+    if (evt.target.checked) {
+      newOffers.push(evt.target.dataset.offerId);
+      this.updateElement({offers: newOffers});
+    } else {
+      newOffers = newOffers.filter((offer) => offer !== evt.target.dataset.offerId);
+    }
+
+    this.updateElement({offers: newOffers});
+  };
+
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
