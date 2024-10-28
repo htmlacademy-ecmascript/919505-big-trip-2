@@ -235,7 +235,8 @@ export default class PointFormView extends AbstractStatefulView {
     }
 
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
-    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationChangeHandler);
+    this.element.querySelector('.event__save-btn').addEventListener('click', this.#formSubmitHandler);
   }
 
   get template() {
@@ -248,6 +249,15 @@ export default class PointFormView extends AbstractStatefulView {
 
   #pointTypeChangeHandler = (evt) => {
     this.updateElement({type: evt.target.value, offers: []});
+  };
+
+  #pointDestinationChangeHandler = (evt) => {
+    const value = evt.target.value;
+    const newDestination = this.#destinations.find((destination) => destination.name === value);
+
+    if (newDestination) {
+      this.updateElement({destination: newDestination.id});
+    }
   };
 
   #formSubmitHandler = (evt) => {
