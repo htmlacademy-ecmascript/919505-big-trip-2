@@ -82,6 +82,6 @@ export default class PointCardView extends AbstractView {
   };
 
   #editClickHandler = () => {
-    this.#handleEditClick();
+    this.#handleEditClick(this.#point.id);
   };
 }

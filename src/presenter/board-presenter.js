@@ -10,18 +10,19 @@ import PointPresenter from './point-presenter';
 
 export default class BoardPresenter {
   #pointListComponent = new PointListView();
-
-  #boardPoints = [];
+  #noPointsComponent = null;
 
   #boardContainer = null;
   #pointsModel = null;
   #filterModel = null;
 
-  #pointPresenters = new Map();
-
   #sortComponent = null;
   #currentSortType = SortType.DAY;
-  #sourcedBoardPoints = [];
+
+  #boardPoints = [];
+
+  #pointPresenters = new Map();
+  #currentlyOpenedFormId = null;
 
   constructor({boardContainer, pointsModel, filterModel}) {
     this.#boardContainer = boardContainer;
@@ -31,7 +32,6 @@ export default class BoardPresenter {
 
   init() {
     this.#boardPoints = [...this.#pointsModel.points];
-    this.#sourcedBoardPoints = [...this.#pointsModel.points];
 
     this.#renderBoard();
   }
@@ -46,10 +46,10 @@ export default class BoardPresenter {
       return;
     }
 
-    this.#renderSort();
     this.#sortPoints();
-    render(this.#pointListComponent, this.#boardContainer);
 
+    this.#renderSort();
+    render(this.#pointListComponent, this.#boardContainer);
     this.#renderPoints();
   }
 
@@ -62,12 +62,6 @@ export default class BoardPresenter {
     render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   }
 
-  // Перерисовывает панель сортировки
-  #redrawSort() {
-    remove(this.#sortComponent);
-    this.#renderSort();
-  }
-
   #renderPoints() {
     this.#boardPoints.forEach((point) => this.#renderPoint(point));
   }
@@ -78,7 +72,8 @@ export default class BoardPresenter {
       pointsModel: this.#pointsModel,
       pointContainer: this.#pointListComponent.element,
       onDataChange: this.#handlePointChange,
-      onModeChange: this.#handleModeChange
+      onFormOpen: this.#handleFormOpen,
+      onFormClose: this.#handleFormClose
     });
 
     pointPresenter.init(point);
@@ -87,34 +82,50 @@ export default class BoardPresenter {
 
   // Рендерит заглушку при отсутствии точек
   #renderNoPointsMessage() {
-    const noPointsComponent = new NoPointsView({currentFilter: this.#filterModel.currentFilter});
-    render(noPointsComponent, this.#boardContainer);
+    this.#noPointsComponent = new NoPointsView({currentFilter: this.#filterModel.currentFilter});
+    render(this.#noPointsComponent, this.#boardContainer);
   }
 
-  // Очищает доску от точек
-  #clearAllPoints() {
+  // Очищает доску
+  #clearBoard() {
+    remove(this.#sortComponent);
+    this.#clearPoints();
+
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
+  }
+
+  // Удаляет все точки
+  #clearPoints() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
   }
 
-  // Перерисовывает все точки
-  #redrawPoints() {
-    this.#clearAllPoints();
-    this.#renderPoints();
-  }
-
   // ============= КОЛЛБЭКИ ДЛЯ ТОЧЕК =============
-
-  // Сбрасывает режим отображения точки
-  #handleModeChange = () => {
-    this.#pointPresenters.forEach((presenter) => presenter.resetView());
-  };
 
   // Обновляет данные по точке, перерисовывает её
   #handlePointChange = (updatedPoint) => {
     this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
-    this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+    this.#sortPoints();
+    this.#clearPoints();
+    this.#renderPoints();
+  };
+
+  // Проверяет, не открыта ли в данный момент форма у другой карточки
+  // Если открыта, сбрасывает режим отображения для старой карточки
+  // Запоминает, у какой карточки сейчас открыта форма
+  #handleFormOpen = (newFormId) => {
+    if (this.#currentlyOpenedFormId) {
+      this.#pointPresenters.get(this.#currentlyOpenedFormId).resetView();
+    }
+
+    this.#currentlyOpenedFormId = newFormId;
+  };
+
+  // Сбрасывает ID формы в случае её закрытия
+  #handleFormClose = () => {
+    this.#currentlyOpenedFormId = null;
   };
 
   // ============= ФИЛЬТРАЦИЯ ТОЧЕК =============
@@ -132,16 +143,15 @@ export default class BoardPresenter {
     this.#boardPoints.sort(pointsSort[this.#currentSortType]);
   }
 
-  // Обновляет тип сортировки, перерисовывает панель сортировки и список точек
+  // Обновляет тип сортировки, перерисовывает доску
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
 
     this.#currentSortType = sortType;
-    this.#sortPoints();
 
-    this.#redrawSort();
-    this.#redrawPoints();
+    this.#clearBoard();
+    this.#renderBoard();
   };
 }

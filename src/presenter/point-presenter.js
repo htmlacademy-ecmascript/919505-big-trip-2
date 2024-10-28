@@ -12,7 +12,8 @@ export default class PointPresenter {
   #pointsModel = null;
   #pointContainerElement = null;
   #handleDataChange = () => {};
-  #handleModeChange = () => {};
+  #handleFormOpen = () => {};
+  #handleFormClose = () => {};
 
   #point = null;
   #pointComponent = null;
@@ -20,11 +21,12 @@ export default class PointPresenter {
 
   #mode = Mode.DEFAULT;
 
-  constructor({pointsModel, pointContainer, onDataChange, onModeChange}) {
+  constructor({pointsModel, pointContainer, onDataChange, onFormOpen, onFormClose}) {
     this.#pointsModel = pointsModel;
     this.#pointContainerElement = pointContainer;
     this.#handleDataChange = onDataChange;
-    this.#handleModeChange = onModeChange;
+    this.#handleFormOpen = onFormOpen;
+    this.#handleFormClose = onFormClose;
   }
 
   // Рендерит точку
@@ -83,7 +85,7 @@ export default class PointPresenter {
 
   // Возвращает новый экземпляр формы редактирования точки
   #createPointFormView() {
-    const offers = this.#pointsModel.getOfferObjectByPointType(this.#point.type).offers;
+    const offers = this.#pointsModel.offers;
     const destinations = this.#pointsModel.destinations;
 
     return new PointFormView({
@@ -97,22 +99,24 @@ export default class PointPresenter {
 
   // ============= ПЕРЕКЛЮЧЕНИЕ РЕЖИМА ОТОБРАЖЕНИЯ =============
 
-  #replaceCardToForm() {
+  #replaceCardToForm(pointId) {
     replace(this.#pointFormComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    this.#handleModeChange();
+    this.#handleFormOpen(pointId);
     this.#mode = Mode.EDITING;
   }
 
   #replaceFormToCard() {
     replace(this.#pointComponent, this.#pointFormComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleFormClose();
     this.#mode = Mode.DEFAULT;
   }
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === KeyCode.ESCAPE) {
       evt.preventDefault();
+      this.#pointFormComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   };
@@ -123,13 +127,14 @@ export default class PointPresenter {
     this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
   };
 
-  #handleEditClick = () => {
-    this.#replaceCardToForm();
+  #handleEditClick = (pointId) => {
+    this.#replaceCardToForm(pointId);
   };
 
   // ============= КОЛЛБЭКИ ДЛЯ ФОРМЫ =============
 
   #handleCloseFormButton = () => {
+    this.#pointFormComponent.reset(this.#point);
     this.#replaceFormToCard();
   };
 
