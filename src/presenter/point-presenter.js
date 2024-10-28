@@ -116,6 +116,7 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === KeyCode.ESCAPE) {
       evt.preventDefault();
+      this.#pointFormComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   };
@@ -133,6 +134,7 @@ export default class PointPresenter {
   // ============= КОЛЛБЭКИ ДЛЯ ФОРМЫ =============
 
   #handleCloseFormButton = () => {
+    this.#pointFormComponent.reset(this.#point);
     this.#replaceFormToCard();
   };
 

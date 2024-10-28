@@ -221,6 +221,12 @@ export default class PointFormView extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
+  reset(point) {
+    this.updateElement(
+      PointFormView.parsePropsToState(point),
+    );
+  }
+
   _restoreHandlers() {
     const rollupButtonElement = this.element.querySelector('.event__rollup-btn');
 
