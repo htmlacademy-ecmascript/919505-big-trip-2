@@ -1,6 +1,6 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {humanizePointDateTime} from '../utils/dates';
-import {POINT_TYPES, BLANK_POINT} from '../const';
+import {BLANK_POINT, POINT_TYPES} from '../const';
 
 const ResetButtonTitle = {
   CANCEL: 'Cancel',
@@ -9,10 +9,11 @@ const ResetButtonTitle = {
 
 function createPointTypeItem(pointId, pointType, currentPointType) {
   const isChecked = pointType === currentPointType ? 'checked' : '';
+  const labelTitle = pointType[0].toUpperCase() + pointType.slice(1);
   return (
     `<div class="event__type-item">
-      <input id="event-type-${pointType}-${pointId}" class="event__type-input  visually-hidden" type="radio" name="event-type" ${isChecked}>
-      <label class="event__type-label  event__type-label--${pointType}" for="event-type-${pointType}-${pointId}">${pointType}</label>
+      <input id="event-type-${pointType}-${pointId}" class="event__type-input  visually-hidden" type="radio" name="event-type" value=${pointType} ${isChecked}>
+      <label class="event__type-label  event__type-label--${pointType}" for="event-type-${pointType}-${pointId}">${labelTitle}</label>
     </div>`
   );
 }
@@ -107,13 +108,13 @@ function createDestinationSection(currentDestinationObject) {
   );
 }
 
-function createDetailsSection(offers, pointId, checkedOffers, currentDestinationObject) {
+function createDetailsSection(currentOffersObject, pointId, checkedOffers, currentDestinationObject) {
   let offersSectionTemplate = '';
   let destinationSectionTemplate = '';
 
   // Рендерим секцию офферов только если они есть в модели для данного destination
-  if (offers.length) {
-    offersSectionTemplate = createOffersSection(offers, checkedOffers, pointId);
+  if (currentOffersObject) {
+    offersSectionTemplate = createOffersSection(currentOffersObject.offers, checkedOffers, pointId);
   }
 
   // Рендерим секцию event__section--destination только если есть описание или картинки
@@ -134,14 +135,15 @@ function createPointFormTemplate(point, offers, destinations) {
   let detailsSectionTemplate = '';
   let destinationName = '';
 
+  const currentOffersObject = offers.find((offer) => offer.type === type);
   const currentDestinationObject = destinations.find((value) => value.id === destination);
 
   if (currentDestinationObject) {
     destinationName = currentDestinationObject.name;
 
     // Рендерим секцию event__details только если для выбранного destination есть офферы или описание или картинки
-    if (offers.length || currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
-      detailsSectionTemplate = createDetailsSection(offers, id, point.offers, currentDestinationObject);
+    if (currentOffersObject || currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
+      detailsSectionTemplate = createDetailsSection(currentOffersObject, point.id, point.offers, currentDestinationObject);
     }
   }
 
@@ -161,7 +163,7 @@ function createPointFormTemplate(point, offers, destinations) {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${POINT_TYPES.map((pointType) => createPointTypeItem(id, pointType, type)).join('')}
+                ${POINT_TYPES.map((pointType) => createPointTypeItem(point.id, pointType, point.type)).join('')}
               </fieldset>
             </div>
           </div>
@@ -178,10 +180,10 @@ function createPointFormTemplate(point, offers, destinations) {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${id}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value=${dateFrom === '' ? '' : humanizePointDateTime(dateFrom)}>
+            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value=${dateFrom === '' ? '' : humanizePointDateTime(point.dateFrom)}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-${id}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value=${dateTo === '' ? '' : humanizePointDateTime(dateTo)}>
+            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value=${dateTo === '' ? '' : humanizePointDateTime(point.dateTo)}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -193,7 +195,7 @@ function createPointFormTemplate(point, offers, destinations) {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${point.id ? ResetButtonTitle.DELETE : ResetButtonTitle.CANCEL}</button>
+          <button class="event__reset-btn" type="reset">${id ? ResetButtonTitle.DELETE : ResetButtonTitle.CANCEL}</button>
           ${rollupTemplate}
         </header>
         ${detailsSectionTemplate}
@@ -202,40 +204,56 @@ function createPointFormTemplate(point, offers, destinations) {
   );
 }
 
-export default class PointFormView extends AbstractView {
-  #point = null;
+export default class PointFormView extends AbstractStatefulView {
   #offers = [];
-  #destinations = null;
+  #destinations = [];
   #handleCloseButtonClick = () => {};
   #handleFormSubmit = () => {};
 
   constructor({offers, destinations, onCloseButtonClick, onFormSubmit, point = BLANK_POINT}) {
     super();
-    this.#point = point;
     this.#offers = offers;
     this.#destinations = destinations;
+    this._setState(PointFormView.parsePropsToState(point));
     this.#handleCloseButtonClick = onCloseButtonClick;
     this.#handleFormSubmit = onFormSubmit;
 
+    this._restoreHandlers();
+  }
+
+  _restoreHandlers() {
     const rollupButtonElement = this.element.querySelector('.event__rollup-btn');
 
     if (rollupButtonElement) {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeButtonClickHandler);
     }
 
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
   get template() {
-    return createPointFormTemplate(this.#point, this.#offers, this.#destinations);
+    return createPointFormTemplate(this._state, this.#offers, this.#destinations);
   }
 
   #closeButtonClickHandler = () => {
     this.#handleCloseButtonClick();
   };
 
+  #pointTypeChangeHandler = (evt) => {
+    this.updateElement({type: evt.target.value, offers: []});
+  };
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#point);
+    this.#handleFormSubmit(PointFormView.parseStateToPoint(this._state));
   };
+
+  static parsePropsToState(point) {
+    return {...point};
+  }
+
+  static parseStateToPoint(state) {
+    return {...state};
+  }
 }

@@ -85,7 +85,7 @@ export default class PointPresenter {
 
   // Возвращает новый экземпляр формы редактирования точки
   #createPointFormView() {
-    const offers = this.#pointsModel.getOfferObjectByPointType(this.#point.type).offers;
+    const offers = this.#pointsModel.offers;
     const destinations = this.#pointsModel.destinations;
 
     return new PointFormView({

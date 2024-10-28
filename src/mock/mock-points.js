@@ -60,7 +60,8 @@ const mockPoints = [
     destination: '6',
     isFavorite: false,
     offers: [
-      '1'
+      '1',
+      '2'
     ]
   },
 
