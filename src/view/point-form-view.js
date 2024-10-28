@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDateTime} from '../utils/dates';
-import {POINT_TYPES} from '../const';
+import {POINT_TYPES, BLANK_POINT} from '../const';
 
 const ResetButtonTitle = {
   CANCEL: 'Cancel',
@@ -209,7 +209,7 @@ export default class PointFormView extends AbstractView {
   #handleCloseButtonClick = () => {};
   #handleFormSubmit = () => {};
 
-  constructor({point, offers, destinations, onCloseButtonClick, onFormSubmit}) {
+  constructor({offers, destinations, onCloseButtonClick, onFormSubmit, point = BLANK_POINT}) {
     super();
     this.#point = point;
     this.#offers = offers;

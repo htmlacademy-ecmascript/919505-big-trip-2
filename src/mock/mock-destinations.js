@@ -2,10 +2,18 @@ const mockDestinations = [
   {
     id: '1',
     name: 'Paris',
-    description: 'London is the capital of France.',
+    description: 'Paris is the capital of France.',
     pictures: [
       {
         src: 'https://loremflickr.com/248/152?random=1241522',
+        description: 'Paris parliament building'
+      },
+      {
+        src: 'https://loremflickr.com/248/152?random=12415462',
+        description: 'Paris parliament building'
+      },
+      {
+        src: 'https://loremflickr.com/248/152?random=1242',
         description: 'Paris parliament building'
       }
     ]
@@ -14,7 +22,7 @@ const mockDestinations = [
   {
     id: '2',
     name: 'Chamonix',
-    description: 'У этой точки нет офферов, но есть описание и картинка',
+    description: 'Славный город Chamonix.',
     pictures: [
       {
         src: 'https://loremflickr.com/248/152?random=3265236',
@@ -38,7 +46,7 @@ const mockDestinations = [
   {
     id: '4',
     name: 'Berlin',
-    description: 'У этой точки есть и офферы, и описание и картинка',
+    description: 'Это город Berlin',
     pictures: [
       {
         src: 'https://loremflickr.com/248/152?random=32552',
@@ -50,21 +58,21 @@ const mockDestinations = [
   {
     id: '5',
     name: 'Madrid',
-    description: 'У этой точки нет картинки, но есть офферы и описание',
+    description: 'Столица Испании',
     pictures: []
   },
 
   {
     id: '6',
     name: 'Zurich',
-    description: '',
+    description: 'Знаменитый Цюрих',
     pictures: []
   },
 
   {
     id: '7',
     name: 'Rome',
-    description: '',
+    description: 'А вы сегодня уже думали о Римской Империи?',
     pictures: [
       {
         src: 'https://loremflickr.com/248/152?random=43634624212',
