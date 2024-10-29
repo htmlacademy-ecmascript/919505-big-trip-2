@@ -316,7 +316,7 @@ export default class PointFormView extends AbstractStatefulView {
   };
 
   #setDatepicker() {
-    const [dateFromInputElement, dateToInputElement] = this.element.querySelector('.event__input--time');
+    const [dateFromInputElement, dateToInputElement] = this.element.querySelectorAll('.event__input--time');
 
     const config = {
       dateFormat: 'd/m/y H:i',
