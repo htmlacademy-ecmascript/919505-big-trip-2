@@ -316,9 +316,7 @@ export default class PointFormView extends AbstractStatefulView {
   };
 
   #setDatepicker() {
-    const [dateFromInputElement, dateToInputElement] = this.element
-      .querySelector('.event__field-group--time')
-      .querySelectorAll('input');
+    const [dateFromInputElement, dateToInputElement] = this.element.querySelector('.event__input--time');
 
     const config = {
       dateFormat: 'd/m/y H:i',
@@ -327,33 +325,25 @@ export default class PointFormView extends AbstractStatefulView {
       'time_24hr': true
     };
 
-    if (this._state.dateFrom) {
-      // flatpickr есть смысл инициализировать только в случае,
-      // если поле выбора даты доступно для заполнения
-      this.#datepickerFrom = flatpickr(
-        dateFromInputElement,
-        {
-          ...config,
-          defaultDate: this._state.dateFrom,
-          onClose: this.#dateFromChangeHandler,
-          maxDate: this._state.dateTo
-        },
-      );
-    }
+    this.#datepickerFrom = flatpickr(
+      dateFromInputElement,
+      {
+        ...config,
+        defaultDate: this._state.dateFrom,
+        onClose: this.#dateFromChangeHandler,
+        maxDate: this._state.dateTo
+      },
+    );
 
-    if (this._state.dateTo) {
-      // flatpickr есть смысл инициализировать только в случае,
-      // если поле выбора даты доступно для заполнения
-      this.#datepickerTo = flatpickr(
-        dateToInputElement,
-        {
-          ...config,
-          defaultDate: this._state.dateTo,
-          onClose: this.#dateToChangeHandler,
-          minDate: this._state.dateTo
-        },
-      );
-    }
+    this.#datepickerTo = flatpickr(
+      dateToInputElement,
+      {
+        ...config,
+        defaultDate: this._state.dateTo,
+        onClose: this.#dateToChangeHandler,
+        minDate: this._state.dateFrom
+      },
+    );
   }
 
   static parsePropsToState(point) {
