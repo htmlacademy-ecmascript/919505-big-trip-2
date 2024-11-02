@@ -37,6 +37,27 @@ export default class BoardPresenter {
     return [...this.#pointsModel.points].sort(pointsSort[this.#currentSortType]);
   }
 
+  // ============= КОЛЛБЭК ДЛЯ НАБЛЮДАТЕЛЯ POINTS_MODEL =============
+
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        // - обновить часть списка (например, когда поменялось описание)
+        this.#pointPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        // - обновить список (например, когда точка ушла в архив)
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        // - обновить всю доску (например, при переключении фильтра)
+        this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
+        break;
+    }
+  };
+
   // ============= РЕНДЕРИНГ ОСНОВНЫХ КОМПОНЕНТОВ =============
 
   // Рендерит доску
@@ -119,25 +140,6 @@ export default class BoardPresenter {
         break;
       case UserAction.DELETE_POINT:
         this.#pointsModel.deletePoint(updateType, update);
-        break;
-    }
-  };
-
-  #handleModelEvent = (updateType, data) => {
-    switch (updateType) {
-      case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
-        this.#pointPresenters.get(data.id).init(data);
-        break;
-      case UpdateType.MINOR:
-        // - обновить список (например, когда точка ушла в архив)
-        this.#clearBoard();
-        this.#renderBoard();
-        break;
-      case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
-        this.#clearBoard({resetSortType: true});
-        this.#renderBoard();
         break;
     }
   };
