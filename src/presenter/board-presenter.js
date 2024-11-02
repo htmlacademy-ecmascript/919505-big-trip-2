@@ -36,6 +36,10 @@ export default class BoardPresenter {
     this.#renderBoard();
   }
 
+  get points() {
+    return this.#pointsModel.points;
+  }
+
   // ============= РЕНДЕРИНГ ОСНОВНЫХ КОМПОНЕНТОВ =============
 
   // Рендерит доску
