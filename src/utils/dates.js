@@ -121,6 +121,10 @@ function humanizeTripTimeInterval(points) {
   return `${dayjs(dateFrom).format(DateFormat.DD_MMM)}&nbsp;&mdash;&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
 }
 
+function isDatesEqual(dateA, dateB) {
+  return (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB);
+}
+
 export {
   humanizePointDate,
   humanizePointHours,
@@ -128,5 +132,6 @@ export {
   humanizePointDateTime,
   humanizeTripTimeInterval,
   getMinMaxDates,
+  isDatesEqual,
   DateFormat,
 };

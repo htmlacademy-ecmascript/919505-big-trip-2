@@ -2,6 +2,17 @@ const KeyCode = {
   ESCAPE: 'Escape'
 };
 
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 const SortType = {
   DAY: 'day',
   EVENT: 'event',
@@ -30,4 +41,4 @@ const BLANK_POINT = {
   offers: []
 };
 
-export {KeyCode, SortType, FilterType, POINT_TYPES, BLANK_POINT};
+export {KeyCode, UserAction, UpdateType, SortType, FilterType, POINT_TYPES, BLANK_POINT};

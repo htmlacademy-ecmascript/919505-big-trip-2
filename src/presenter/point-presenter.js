@@ -1,5 +1,6 @@
 import {render, replace, remove} from '../framework/render';
-import {KeyCode} from '../const';
+import {KeyCode, UserAction, UpdateType} from '../const';
+import {isDatesEqual} from '../utils/dates';
 import PointFormView from '../view/point-form-view';
 import PointCardView from '../view/point-card-view';
 
@@ -93,7 +94,8 @@ export default class PointPresenter {
       offers,
       destinations,
       onCloseButtonClick: this.#handleCloseFormButton,
-      onFormSubmit: this.#handleFormSubmit
+      onDeletePointClick: this.#handleDeletePointClick,
+      onFormSubmit: this.#handleFormSubmit,
     });
   }
 
@@ -124,7 +126,7 @@ export default class PointPresenter {
   // ============= КОЛЛБЭКИ ДЛЯ КАРТОЧКИ =============
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.MINOR, {...this.#point, isFavorite: !this.#point.isFavorite});
   };
 
   #handleEditClick = (pointId) => {
@@ -138,8 +140,18 @@ export default class PointPresenter {
     this.#replaceFormToCard();
   };
 
-  #handleFormSubmit = (point) => {
-    this.#handleDataChange(point);
+  #handleDeletePointClick = (point) => {
+    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
+    this.#replaceFormToCard();
+  };
+
+  #handleFormSubmit = (updatedPoint) => {
+    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
+    // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление
+    const isMinorUpdate = !isDatesEqual(this.#point.dateFrom, updatedPoint.dateFrom) ||
+      this.#point.basePrice !== updatedPoint.basePrice;
+
+    this.#handleDataChange(UserAction.UPDATE_POINT, isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH, updatedPoint);
     this.#replaceFormToCard();
   };
 }
