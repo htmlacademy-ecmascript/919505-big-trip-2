@@ -70,6 +70,11 @@ export default class PointPresenter {
   }
 
   resetView() {
+    if (this.#point.id === BLANK_POINT.id) {
+      this.#destroyNewPointForm();
+      return;
+    }
+
     if (this.#mode !== Mode.DEFAULT) {
       this.#replaceFormToCard();
     }
@@ -153,9 +158,8 @@ export default class PointPresenter {
   };
 
   #handleDeletePointClick = (point) => {
-    if (!point.id) {
-      this.destroy();
-      this.#addPointElement.disabled = false;
+    if (point.id === BLANK_POINT.id) {
+      this.#destroyNewPointForm();
       return;
     }
 
@@ -163,17 +167,22 @@ export default class PointPresenter {
     this.#replaceFormToCard();
   };
 
+  #destroyNewPointForm() {
+    this.destroy();
+    this.#addPointElement.disabled = false;
+  }
+
   #handleFormSubmit = (updatedPoint) => {
     // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
     // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление
     const isMinorUpdate = !isDatesEqual(this.#point.dateFrom, updatedPoint.dateFrom) ||
-      this.#point.basePrice !== updatedPoint.basePrice;
+      this.#point.basePrice !== updatedPoint.basePrice || updatedPoint.id === BLANK_POINT.id;
 
-    const userAction = updatedPoint.id ? UserAction.UPDATE_POINT : UserAction.ADD_POINT;
+    let userAction = UserAction.UPDATE_POINT;
 
-    if (!updatedPoint.id) {
-      const newIdNumber = Math.random() * 10000 + 54;
-      updatedPoint.id = newIdNumber.toString();
+    if (updatedPoint.id === BLANK_POINT.id) {
+      updatedPoint.id = Math.ceil(Math.random() * 10000 + 54).toString();
+      userAction = UserAction.ADD_POINT;
       this.#addPointElement.disabled = false;
     }
 

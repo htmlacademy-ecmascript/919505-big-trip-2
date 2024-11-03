@@ -32,11 +32,11 @@ const FilterType = {
 const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const BLANK_POINT = {
-  id: null,
+  id: 'BLANK-POINT-ID',
   type: 'flight',
   basePrice: 0,
-  dateFrom: '',
-  dateTo: '',
+  dateFrom: new Date().toISOString(),
+  dateTo: new Date().toISOString(),
   destination: '',
   isFavorite: false,
   offers: []

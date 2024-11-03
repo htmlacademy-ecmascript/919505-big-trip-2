@@ -187,10 +187,10 @@ function createPointFormTemplate(point, offers, destinations) {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${id}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dateFrom === '' ? '' : humanizePointDateTime(point.dateFrom)}" required>
+            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${humanizePointDateTime(dateFrom)}" required>
             &mdash;
             <label class="visually-hidden" for="event-end-time-${id}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dateTo === '' ? '' : humanizePointDateTime(point.dateTo)}" required>
+            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${humanizePointDateTime(dateTo)}" required>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -202,7 +202,7 @@ function createPointFormTemplate(point, offers, destinations) {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${id ? ResetButtonTitle.DELETE : ResetButtonTitle.CANCEL}</button>
+          <button class="event__reset-btn" type="reset">${id !== BLANK_POINT.id ? ResetButtonTitle.DELETE : ResetButtonTitle.CANCEL}</button>
           ${rollupTemplate}
         </header>
         ${detailsSectionTemplate}

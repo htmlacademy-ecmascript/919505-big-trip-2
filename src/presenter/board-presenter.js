@@ -115,6 +115,10 @@ export default class BoardPresenter {
 
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
+
+    if (point === BLANK_POINT) {
+      this.#currentlyOpenedFormId = BLANK_POINT.id;
+    }
   }
 
   // Рендерит заглушку при отсутствии точек
@@ -163,7 +167,7 @@ export default class BoardPresenter {
   // Если открыта, сбрасывает режим отображения для старой карточки
   // Запоминает, у какой карточки сейчас открыта форма
   #handleFormOpen = (newFormId) => {
-    if (this.#currentlyOpenedFormId) {
+    if (this.#currentlyOpenedFormId || this.#currentlyOpenedFormId === BLANK_POINT.id) {
       this.#pointPresenters.get(this.#currentlyOpenedFormId).resetView();
     }
 
