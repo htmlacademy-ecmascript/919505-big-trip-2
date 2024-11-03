@@ -23,14 +23,23 @@ function createPointFilterTemplate(filters, currentFilter) {
 export default class PointFilterView extends AbstractView {
   #filters = null;
   #currentFilter = null;
+  #handleFilterTypeChange = () => {};
 
-  constructor({filters, currentFilter}) {
+  constructor({filters, currentFilter, onFilterTypeChange}) {
     super();
     this.#filters = filters;
     this.#currentFilter = currentFilter;
+    this.#handleFilterTypeChange = onFilterTypeChange;
+
+    this.element.addEventListener('change', this.#filterTypeChangeHandler);
   }
 
   get template() {
     return createPointFilterTemplate(this.#filters, this.#currentFilter);
   }
+
+  #filterTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFilterTypeChange(evt.target.value);
+  };
 }

@@ -1,5 +1,5 @@
 import {SortType, UpdateType, UserAction} from '../const.js';
-//import {pointsFilter} from '../utils/filter';
+import {pointsFilter} from '../utils/filter';
 import {pointsSort} from '../utils/sort';
 import {render, remove, RenderPosition} from '../framework/render';
 import PointSortingPanelView from '../view/point-sorting-panel-view';
@@ -27,31 +27,34 @@ export default class BoardPresenter {
     this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   init() {
     this.#renderBoard();
   }
 
+  // Вовзращает массив точек под текущие фильтрацию и сортировку
   get points() {
-    return [...this.#pointsModel.points].sort(pointsSort[this.#currentSortType]);
+    const currentFilter = this.#filterModel.currentFilter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = pointsFilter[currentFilter](points);
+
+    return filteredPoints.sort(pointsSort[this.#currentSortType]);
   }
 
-  // ============= КОЛЛБЭК ДЛЯ НАБЛЮДАТЕЛЯ POINTS_MODEL =============
+  // ============= КОЛЛБЭК ДЛЯ МОДЕЛЕЙ =============
 
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this.#pointPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        // - обновить список (например, когда точка ушла в архив)
         this.#clearBoard();
         this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
         break;
@@ -84,6 +87,7 @@ export default class BoardPresenter {
     render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   }
 
+  // Рендерит точки
   #renderPoints(points) {
     points.forEach((point) => this.#renderPoint(point));
   }
@@ -159,13 +163,6 @@ export default class BoardPresenter {
   #handleFormClose = () => {
     this.#currentlyOpenedFormId = null;
   };
-
-  // ============= ФИЛЬТРАЦИЯ ТОЧЕК =============
-
-  // Фильтрует точки с учетом текущей фильтрации
-  #filterPoints() {
-    //const currentFilter = this.#filterModel.currentFilter;
-  }
 
   // ============= СОРТИРОВКА ТОЧЕК =============
 
