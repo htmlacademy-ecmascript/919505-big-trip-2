@@ -291,7 +291,7 @@ export default class PointFormView extends AbstractStatefulView {
   };
 
   #pointPriceChangeHandler = (evt) => {
-    this.updateElement({basePrice: evt.target.value});
+    this.updateElement({basePrice: parseInt(evt.target.value, 10)});
   };
 
   #pointOfferChangeHandler = (evt) => {
@@ -317,12 +317,12 @@ export default class PointFormView extends AbstractStatefulView {
   };
 
   #dateFromChangeHandler = ([userDate]) => {
-    this.updateElement({dateFrom: userDate});
+    this.updateElement({dateFrom: userDate.toISOString()});
     this.#datepickerTo.set('minDate', this._state.dateFrom);
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    this.updateElement({dateTo: userDate});
+    this.updateElement({dateTo: userDate.toISOString()});
     this.#datepickerFrom.set('maxDate', this._state.dateTo);
   };
 
