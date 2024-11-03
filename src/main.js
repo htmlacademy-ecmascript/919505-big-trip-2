@@ -28,15 +28,16 @@ const pointFilterPresenter = new PointFilterPresenter({
 
 const boardPresenter = new BoardPresenter({
   boardContainer: boardContainerElement,
+  addPointElement,
   pointsModel,
   filterModel
-});
-
-addPointElement.addEventListener('click', () => {
-  boardPresenter.createPoint();
-  addPointElement.disabled = true;
 });
 
 tripInfoPresenter.init();
 pointFilterPresenter.init();
 boardPresenter.init();
+
+addPointElement.addEventListener('click', () => {
+  boardPresenter.createPoint();
+  addPointElement.disabled = true;
+});

@@ -12,6 +12,8 @@ export default class BoardPresenter {
   #noPointsComponent = null;
 
   #boardContainer = null;
+  #addPointElement = null;
+
   #pointsModel = null;
   #filterModel = null;
 
@@ -21,8 +23,9 @@ export default class BoardPresenter {
   #pointPresenters = new Map();
   #currentlyOpenedFormId = null;
 
-  constructor({boardContainer, pointsModel, filterModel}) {
+  constructor({boardContainer, addPointElement, pointsModel, filterModel}) {
     this.#boardContainer = boardContainer;
+    this.#addPointElement = addPointElement;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
@@ -104,6 +107,7 @@ export default class BoardPresenter {
     const pointPresenter = new PointPresenter({
       pointsModel: this.#pointsModel,
       pointContainer: this.#pointListComponent.element,
+      addPointElement: this.#addPointElement,
       onDataChange: this.#handleViewAction,
       onFormOpen: this.#handleFormOpen,
       onFormClose: this.#handleFormClose

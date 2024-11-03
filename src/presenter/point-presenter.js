@@ -12,6 +12,7 @@ const Mode = {
 export default class PointPresenter {
   #pointsModel = null;
   #pointContainerElement = null;
+  #addPointElement = null;
   #handleDataChange = () => {};
   #handleFormOpen = () => {};
   #handleFormClose = () => {};
@@ -22,9 +23,10 @@ export default class PointPresenter {
 
   #mode = Mode.DEFAULT;
 
-  constructor({pointsModel, pointContainer, onDataChange, onFormOpen, onFormClose}) {
+  constructor({pointsModel, pointContainer, addPointElement, onDataChange, onFormOpen, onFormClose}) {
     this.#pointsModel = pointsModel;
     this.#pointContainerElement = pointContainer;
+    this.#addPointElement = addPointElement;
     this.#handleDataChange = onDataChange;
     this.#handleFormOpen = onFormOpen;
     this.#handleFormClose = onFormClose;
@@ -151,6 +153,12 @@ export default class PointPresenter {
   };
 
   #handleDeletePointClick = (point) => {
+    if (!point.id) {
+      this.destroy();
+      this.#addPointElement.disabled = false;
+      return;
+    }
+
     this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
     this.#replaceFormToCard();
   };
@@ -166,6 +174,7 @@ export default class PointPresenter {
     if (!updatedPoint.id) {
       const newIdNumber = Math.random() * 10000 + 54;
       updatedPoint.id = newIdNumber.toString();
+      this.#addPointElement.disabled = false;
     }
 
     this.#handleDataChange(userAction, isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH, updatedPoint);
