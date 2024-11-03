@@ -7,6 +7,7 @@ const UserAction = {
   ADD_POINT: 'ADD_POINT',
   DELETE_POINT: 'DELETE_POINT',
 };
+
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',

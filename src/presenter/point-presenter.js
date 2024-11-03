@@ -1,5 +1,5 @@
-import {render, replace, remove} from '../framework/render';
-import {KeyCode, UserAction, UpdateType} from '../const';
+import {render, replace, remove, RenderPosition} from '../framework/render';
+import {KeyCode, UserAction, UpdateType, BLANK_POINT} from '../const';
 import {isDatesEqual} from '../utils/dates';
 import PointFormView from '../view/point-form-view';
 import PointCardView from '../view/point-card-view';
@@ -40,6 +40,11 @@ export default class PointPresenter {
     this.#pointComponent = this.#createPointCardView();
     this.#pointFormComponent = this.#createPointFormView();
 
+    if (this.#point === BLANK_POINT) {
+      render(this.#pointFormComponent, this.#pointContainerElement, RenderPosition.AFTERBEGIN);
+      return;
+    }
+
     if (prevPointComponent === null || prevPointFormComponent === null) {
       render(this.#pointComponent, this.#pointContainerElement);
       return;
@@ -73,12 +78,17 @@ export default class PointPresenter {
   // Возвращает новый экземпляр карточки точки
   #createPointCardView() {
     const offers = this.#pointsModel.getChosenPointOffers(this.#point.type, this.#point.offers);
-    const destination = this.#pointsModel.getDestinationById(this.#point.destination).name;
+    const destination = this.#pointsModel.getDestinationById(this.#point.destination);
+    let destinationName = '';
+
+    if (destination) {
+      destinationName = destination.name;
+    }
 
     return new PointCardView({
       point: this.#point,
       offers,
-      destination,
+      destination: destinationName,
       onFavoriteClick: this.#handleFavoriteClick,
       onEditClick: this.#handleEditClick
     });
@@ -151,7 +161,14 @@ export default class PointPresenter {
     const isMinorUpdate = !isDatesEqual(this.#point.dateFrom, updatedPoint.dateFrom) ||
       this.#point.basePrice !== updatedPoint.basePrice;
 
-    this.#handleDataChange(UserAction.UPDATE_POINT, isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH, updatedPoint);
+    const userAction = updatedPoint.id ? UserAction.UPDATE_POINT : UserAction.ADD_POINT;
+
+    if (!updatedPoint.id) {
+      const newIdNumber = Math.random() * 10000 + 54;
+      updatedPoint.id = newIdNumber.toString();
+    }
+
+    this.#handleDataChange(userAction, isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH, updatedPoint);
     this.#replaceFormToCard();
   };
 }

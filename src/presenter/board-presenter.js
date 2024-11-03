@@ -1,4 +1,4 @@
-import {SortType, UpdateType, UserAction} from '../const.js';
+import {SortType, FilterType, UpdateType, UserAction, BLANK_POINT} from '../const.js';
 import {pointsFilter} from '../utils/filter';
 import {pointsSort} from '../utils/sort';
 import {render, remove, RenderPosition} from '../framework/render';
@@ -32,6 +32,13 @@ export default class BoardPresenter {
 
   init() {
     this.#renderBoard();
+  }
+
+  createPoint() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+
+    this.#renderPoint(BLANK_POINT);
   }
 
   // Вовзращает массив точек под текущие фильтрацию и сортировку
