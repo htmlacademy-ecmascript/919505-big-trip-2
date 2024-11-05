@@ -44,6 +44,7 @@ export default class PointPresenter {
 
     if (this.#point === BLANK_POINT) {
       render(this.#pointFormComponent, this.#pointContainerElement, RenderPosition.AFTERBEGIN);
+      document.addEventListener('keydown', this.#escKeyDownHandler);
       return;
     }
 
@@ -135,6 +136,12 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === KeyCode.ESCAPE) {
       evt.preventDefault();
+
+      if (this.#point.id === BLANK_POINT.id) {
+        this.#handleDeletePointClick();
+        return;
+      }
+
       this.#pointFormComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
@@ -157,13 +164,13 @@ export default class PointPresenter {
     this.#replaceFormToCard();
   };
 
-  #handleDeletePointClick = (point) => {
-    if (point.id === BLANK_POINT.id) {
+  #handleDeletePointClick = () => {
+    if (this.#point.id === BLANK_POINT.id) {
       this.#destroyNewPointForm();
       return;
     }
 
-    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
+    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, this.#point);
     this.#replaceFormToCard();
   };
 

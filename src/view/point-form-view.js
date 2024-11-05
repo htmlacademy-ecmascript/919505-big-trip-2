@@ -203,7 +203,7 @@ function createPointFormTemplate(point, offers, destinations) {
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">${id !== BLANK_POINT.id ? ResetButtonTitle.DELETE : ResetButtonTitle.CANCEL}</button>
-          ${rollupTemplate}
+          ${id !== BLANK_POINT.id ? rollupTemplate : ''}
         </header>
         ${detailsSectionTemplate}
       </form>
@@ -252,7 +252,7 @@ export default class PointFormView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#pointPriceChangeHandler);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#pointOfferChangeHandler);
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#DeletePointClickHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deletePointClickHandler);
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
 
     this.#setDatepicker();
@@ -306,9 +306,9 @@ export default class PointFormView extends AbstractStatefulView {
     this.updateElement({offers: currentOffers});
   };
 
-  #DeletePointClickHandler = (evt) => {
+  #deletePointClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleDeleteClick(PointFormView.parseStateToPoint(this._state));
+    this.#handleDeleteClick();
   };
 
   #formSubmitHandler = (evt) => {
