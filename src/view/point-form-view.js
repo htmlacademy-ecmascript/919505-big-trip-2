@@ -265,14 +265,6 @@ export default class PointFormView extends AbstractStatefulView {
     return createPointFormTemplate(this._state, this.#offers, this.#destinations);
   }
 
-  #onceClickHandler(innerEvent) {
-    if (this.element) {
-      if (innerEvent.target.type !== 'submit' && this.element.parentElement) {
-        this.updateElement(this._state);
-      }
-    }
-  }
-
   #destroyDatePicker(datePicker) {
     if (datePicker) {
       datePicker.destroy();
@@ -294,12 +286,15 @@ export default class PointFormView extends AbstractStatefulView {
 
     this._setState({destination: newDestination ? newDestination.id : this._state.destination});
 
-    this.element.addEventListener('click', this.#onceClickHandler, {once: true});
+    this.element.addEventListener('click', (innerEvent) => {
+      if (innerEvent.target.type !== 'submit' && this.element.parentElement) {
+        this.updateElement(this._state);
+      }
+    }, {once: true});
   };
 
   #pointPriceChangeHandler = (evt) => {
-    this._setState({basePrice: parseInt(evt.target.value, 10)});
-    this.element.addEventListener('click', this.#onceClickHandler, {once: true});
+    this.updateElement({basePrice: parseInt(evt.target.value, 10)});
   };
 
   #pointOfferChangeHandler = (evt) => {
