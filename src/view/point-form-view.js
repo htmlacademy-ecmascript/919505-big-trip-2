@@ -119,14 +119,20 @@ function createDetailsSection(currentOffersObject, pointId, checkedOffers, curre
   let offersSectionTemplate = '';
   let destinationSectionTemplate = '';
 
+  if ((!currentDestinationObject || !currentDestinationObject.description) && currentOffersObject.offers.length === 0) {
+    return '';
+  }
+
   // Рендерим секцию офферов только если они есть в модели для данного destination
-  if (currentOffersObject) {
+  if (currentOffersObject.offers.length > 0) {
     offersSectionTemplate = createOffersSection(currentOffersObject.offers, checkedOffers, pointId);
   }
 
-  // Рендерим секцию event__section--destination только если есть описание или картинки
-  if (currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
-    destinationSectionTemplate = createDestinationSection(currentDestinationObject);
+  if (currentDestinationObject) {
+    // Рендерим секцию event__section--destination только если есть описание или картинки
+    if (currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
+      destinationSectionTemplate = createDestinationSection(currentDestinationObject);
+    }
   }
 
   return (
@@ -147,12 +153,9 @@ function createPointFormTemplate(point, offers, destinations) {
 
   if (currentDestinationObject) {
     destinationName = currentDestinationObject.name;
-
-    // Рендерим секцию event__details только если для выбранного destination есть офферы или описание или картинки
-    if (currentOffersObject || currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
-      detailsSectionTemplate = createDetailsSection(currentOffersObject, point.id, point.offers, currentDestinationObject);
-    }
   }
+
+  detailsSectionTemplate = createDetailsSection(currentOffersObject, point.id, point.offers, currentDestinationObject);
 
   const rollupTemplate = point.id ? createRollupItem() : '';
 
@@ -262,6 +265,14 @@ export default class PointFormView extends AbstractStatefulView {
     return createPointFormTemplate(this._state, this.#offers, this.#destinations);
   }
 
+  #onceClickHandler(innerEvent) {
+    if (this.element) {
+      if (innerEvent.target.type !== 'submit' && this.element.parentElement) {
+        this.updateElement(this._state);
+      }
+    }
+  }
+
   #destroyDatePicker(datePicker) {
     if (datePicker) {
       datePicker.destroy();
@@ -283,15 +294,12 @@ export default class PointFormView extends AbstractStatefulView {
 
     this._setState({destination: newDestination ? newDestination.id : this._state.destination});
 
-    this.element.addEventListener('click', (innerEvent) => {
-      if (innerEvent.target.type !== 'submit' && this.element.parentElement) {
-        this.updateElement(this._state);
-      }
-    }, {once: true});
+    this.element.addEventListener('click', this.#onceClickHandler, {once: true});
   };
 
   #pointPriceChangeHandler = (evt) => {
-    this.updateElement({basePrice: parseInt(evt.target.value, 10)});
+    this._setState({basePrice: parseInt(evt.target.value, 10)});
+    this.element.addEventListener('click', this.#onceClickHandler, {once: true});
   };
 
   #pointOfferChangeHandler = (evt) => {
