@@ -167,6 +167,7 @@ export default class PointPresenter {
   #handleDeletePointClick = () => {
     if (this.#point.id === BLANK_POINT.id) {
       this.#destroyNewPointForm();
+      this.#handleFormClose();
       return;
     }
 

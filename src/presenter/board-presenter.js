@@ -113,6 +113,11 @@ export default class BoardPresenter {
       onFormClose: this.#handleFormClose
     });
 
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+      render(this.#pointListComponent, this.#boardContainer);
+    }
+
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
 
@@ -177,6 +182,11 @@ export default class BoardPresenter {
   // Сбрасывает ID формы в случае её закрытия
   #handleFormClose = () => {
     this.#currentlyOpenedFormId = null;
+
+    if (this.points.length === 0) {
+      this.#clearBoard();
+      this.#renderBoard();
+    }
   };
 
   // ============= СОРТИРОВКА ТОЧЕК =============
