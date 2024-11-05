@@ -1,3 +1,5 @@
+const REG_EXP_ANY_POSITIVE_NUMBER = /^[1-9][0-9]*$/;
+
 const KeyCode = {
   ESCAPE: 'Escape'
 };
@@ -35,11 +37,11 @@ const BLANK_POINT = {
   id: 'BLANK-POINT-ID',
   type: 'flight',
   basePrice: 0,
-  dateFrom: new Date().toISOString(),
-  dateTo: new Date().toISOString(),
+  dateFrom: '',
+  dateTo: '',
   destination: '',
   isFavorite: false,
   offers: []
 };
 
-export {KeyCode, UserAction, UpdateType, SortType, FilterType, POINT_TYPES, BLANK_POINT};
+export {REG_EXP_ANY_POSITIVE_NUMBER, KeyCode, UserAction, UpdateType, SortType, FilterType, POINT_TYPES, BLANK_POINT};
