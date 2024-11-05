@@ -287,17 +287,9 @@ export default class PointFormView extends AbstractStatefulView {
 
   #pointDestinationChangeHandler = (evt) => {
     const value = evt.target.value;
+    const newDestination = this.#destinations.find((destination) => destination.name === value);
 
-    const datalist = document.getElementById(`destination-list-${this._state.id}`);
-
-    const isValid = Array.from(datalist.options).some(
-      (option) => option.value === value
-    );
-
-    if (!isValid) {
-      evt.target.setCustomValidity('Пожалуйста, выберите значение из списка');
-    } else {
-      const newDestination = this.#destinations.find((destination) => destination.name === value);
+    if(newDestination) {
       this._setState({destination: newDestination ? newDestination.id : this._state.destination});
 
       this.element.addEventListener('click', (innerEvent) => {
@@ -305,6 +297,8 @@ export default class PointFormView extends AbstractStatefulView {
           this.updateElement(this._state);
         }
       }, {once: true});
+    } else {
+      evt.target.setCustomValidity('Пожалуйста, выберите значение из списка');
     }
   };
 
@@ -339,15 +333,7 @@ export default class PointFormView extends AbstractStatefulView {
     const isDateFromValid = this.#dateFromInputElement.value !== '';
     const isDateToValid = this.#dateToInputElement.value !== '';
 
-    if (!isDateFromValid) {
-      this.#dateFromInputElement.setCustomValidity('Введите дату начала поездки');
-      this.#dateFromInputElement.reportValidity();
-      return;
-    }
-
-    if (!isDateToValid) {
-      this.#dateToInputElement.setCustomValidity('Введите дату завершения поездки');
-      this.#dateToInputElement.reportValidity();
+    if (!isDateFromValid || !isDateToValid) {
       return;
     }
 
