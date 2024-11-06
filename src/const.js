@@ -1,5 +1,19 @@
+const REG_EXP_ANY_POSITIVE_NUMBER = /^[1-9][0-9]*$/;
+
 const KeyCode = {
   ESCAPE: 'Escape'
+};
+
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
 };
 
 const SortType = {
@@ -20,7 +34,7 @@ const FilterType = {
 const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const BLANK_POINT = {
-  id: null,
+  id: 'BLANK-POINT-ID',
   type: 'flight',
   basePrice: 0,
   dateFrom: '',
@@ -30,4 +44,4 @@ const BLANK_POINT = {
   offers: []
 };
 
-export {KeyCode, SortType, FilterType, POINT_TYPES, BLANK_POINT};
+export {REG_EXP_ANY_POSITIVE_NUMBER, KeyCode, UserAction, UpdateType, SortType, FilterType, POINT_TYPES, BLANK_POINT};

@@ -13,6 +13,8 @@ const boardContainerElement = document.querySelector('.trip-events');
 const tripInfoContainerElement = headerElement.querySelector('.trip-main');
 const pointFilterContainerElement = headerElement.querySelector('.trip-controls__filters');
 
+const addPointElement = headerElement.querySelector('.trip-main__event-add-btn');
+
 const tripInfoPresenter = new TripInfoPresenter({
   tripInfoContainerElement: tripInfoContainerElement,
   pointsModel
@@ -26,6 +28,7 @@ const pointFilterPresenter = new PointFilterPresenter({
 
 const boardPresenter = new BoardPresenter({
   boardContainer: boardContainerElement,
+  addPointElement,
   pointsModel,
   filterModel
 });
@@ -33,3 +36,8 @@ const boardPresenter = new BoardPresenter({
 tripInfoPresenter.init();
 pointFilterPresenter.init();
 boardPresenter.init();
+
+addPointElement.addEventListener('click', () => {
+  boardPresenter.createPoint();
+  addPointElement.disabled = true;
+});

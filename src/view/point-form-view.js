@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {humanizePointDateTime} from '../utils/dates';
-import {BLANK_POINT, POINT_TYPES} from '../const';
+import {BLANK_POINT, POINT_TYPES, REG_EXP_ANY_POSITIVE_NUMBER} from '../const';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
@@ -9,6 +9,8 @@ const ResetButtonTitle = {
   CANCEL: 'Cancel',
   DELETE: 'Delete',
 };
+
+const DEFAULT_PRICE = '0';
 
 function createPointTypeItem(pointId, pointType, currentPointType) {
   const isChecked = pointType === currentPointType ? 'checked' : '';
@@ -119,14 +121,20 @@ function createDetailsSection(currentOffersObject, pointId, checkedOffers, curre
   let offersSectionTemplate = '';
   let destinationSectionTemplate = '';
 
+  if ((!currentDestinationObject || !currentDestinationObject.description) && (!currentOffersObject || currentOffersObject.offers.length === 0)) {
+    return '';
+  }
+
   // Рендерим секцию офферов только если они есть в модели для данного destination
-  if (currentOffersObject) {
+  if (currentOffersObject && currentOffersObject.offers.length > 0) {
     offersSectionTemplate = createOffersSection(currentOffersObject.offers, checkedOffers, pointId);
   }
 
-  // Рендерим секцию event__section--destination только если есть описание или картинки
-  if (currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
-    destinationSectionTemplate = createDestinationSection(currentDestinationObject);
+  if (currentDestinationObject) {
+    // Рендерим секцию event__section--destination только если есть описание или картинки
+    if (currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
+      destinationSectionTemplate = createDestinationSection(currentDestinationObject);
+    }
   }
 
   return (
@@ -147,18 +155,15 @@ function createPointFormTemplate(point, offers, destinations) {
 
   if (currentDestinationObject) {
     destinationName = currentDestinationObject.name;
-
-    // Рендерим секцию event__details только если для выбранного destination есть офферы или описание или картинки
-    if (currentOffersObject || currentDestinationObject.description || currentDestinationObject.pictures.length > 0) {
-      detailsSectionTemplate = createDetailsSection(currentOffersObject, point.id, point.offers, currentDestinationObject);
-    }
   }
+
+  detailsSectionTemplate = createDetailsSection(currentOffersObject, point.id, point.offers, currentDestinationObject);
 
   const rollupTemplate = point.id ? createRollupItem() : '';
 
   return (
     `<li class="trip-events__item">
-      <form class="event event--edit" action="#" method="post">
+      <form class="event event--edit" action="" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
@@ -179,7 +184,7 @@ function createPointFormTemplate(point, offers, destinations) {
             <label class="event__label  event__type-output" for="event-destination-${id}">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${id}">
+            <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${id}" required>
             <datalist id="destination-list-${id}">
               ${destinations.map((value) => createDestinationItem(value.name)).join('')}
             </datalist>
@@ -187,10 +192,10 @@ function createPointFormTemplate(point, offers, destinations) {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${id}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value=${dateFrom === '' ? '' : humanizePointDateTime(point.dateFrom)}>
+            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dateFrom === '' ? '' : humanizePointDateTime(dateFrom)}" required>
             &mdash;
             <label class="visually-hidden" for="event-end-time-${id}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value=${dateTo === '' ? '' : humanizePointDateTime(point.dateTo)}>
+            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dateTo === '' ? '' : humanizePointDateTime(dateTo)}" required>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -202,8 +207,8 @@ function createPointFormTemplate(point, offers, destinations) {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${id ? ResetButtonTitle.DELETE : ResetButtonTitle.CANCEL}</button>
-          ${rollupTemplate}
+          <button class="event__reset-btn" type="reset">${id !== BLANK_POINT.id ? ResetButtonTitle.DELETE : ResetButtonTitle.CANCEL}</button>
+          ${id !== BLANK_POINT.id ? rollupTemplate : ''}
         </header>
         ${detailsSectionTemplate}
       </form>
@@ -217,14 +222,19 @@ export default class PointFormView extends AbstractStatefulView {
   #datepickerFrom = null;
   #datepickerTo = null;
   #handleCloseButtonClick = () => {};
+  #handleDeleteClick = () => {};
   #handleFormSubmit = () => {};
 
-  constructor({offers, destinations, onCloseButtonClick, onFormSubmit, point = BLANK_POINT}) {
+  #dateFromInputElement = null;
+  #dateToInputElement = null;
+
+  constructor({offers, destinations, onCloseButtonClick, onDeletePointClick, onFormSubmit, point = BLANK_POINT}) {
     super();
     this.#offers = offers;
     this.#destinations = destinations;
     this._setState(PointFormView.parsePropsToState(point));
     this.#handleCloseButtonClick = onCloseButtonClick;
+    this.#handleDeleteClick = onDeletePointClick;
     this.#handleFormSubmit = onFormSubmit;
 
     this._restoreHandlers();
@@ -247,10 +257,11 @@ export default class PointFormView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#closeButtonClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('input', this.#pointDestinationChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#pointPriceChangeHandler);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#pointOfferChangeHandler);
-    this.element.querySelector('.event__save-btn').addEventListener('click', this.#formSubmitHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deletePointClickHandler);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
 
     this.#setDatepicker();
   }
@@ -278,13 +289,23 @@ export default class PointFormView extends AbstractStatefulView {
     const value = evt.target.value;
     const newDestination = this.#destinations.find((destination) => destination.name === value);
 
-    if (newDestination) {
-      this.updateElement({destination: newDestination.id});
+    if(newDestination) {
+      this._setState({destination: newDestination ? newDestination.id : this._state.destination});
+
+      this.element.addEventListener('click', (innerEvent) => {
+        if (innerEvent.target.type !== 'submit' && this.element.parentElement) {
+          this.updateElement(this._state);
+        }
+      }, {once: true});
+    } else {
+      evt.target.setCustomValidity('Пожалуйста, выберите значение из списка');
     }
   };
 
   #pointPriceChangeHandler = (evt) => {
-    this.updateElement({basePrice: evt.target.value});
+    const isPriceValid = REG_EXP_ANY_POSITIVE_NUMBER.test(evt.target.value);
+    const newValue = isPriceValid ? evt.target.value : DEFAULT_PRICE;
+    this.updateElement({basePrice: parseInt(newValue, 10)});
   };
 
   #pointOfferChangeHandler = (evt) => {
@@ -299,24 +320,62 @@ export default class PointFormView extends AbstractStatefulView {
     this.updateElement({offers: currentOffers});
   };
 
+  #deletePointClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick();
+  };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
+
+    const priceInputElement = this.element.querySelector('.event__input--price');
+    const isPriceValid = REG_EXP_ANY_POSITIVE_NUMBER.test(priceInputElement.value);
+    const isDateFromValid = this.#dateFromInputElement.value !== '';
+    const isDateToValid = this.#dateToInputElement.value !== '';
+
+    if (!isDateFromValid || !isDateToValid) {
+      return;
+    }
+
+    if (!isPriceValid) {
+      priceInputElement.setCustomValidity('Введите целое положительное число');
+      priceInputElement.reportValidity();
+      return;
+    }
+
     this.#handleFormSubmit(PointFormView.parseStateToPoint(this._state));
   };
 
   #dateFromChangeHandler = ([userDate]) => {
-    this.updateElement({dateFrom: userDate});
+    let newDate = '';
+    let newInputValue = '';
+
+    if (userDate) {
+      newDate = userDate.toISOString();
+      newInputValue = humanizePointDateTime(newDate);
+    }
+
+    this.#dateFromInputElement.value = newInputValue;
+    this.updateElement({dateFrom: newDate});
     this.#datepickerTo.set('minDate', this._state.dateFrom);
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    this.updateElement({dateTo: userDate});
+    let newDate = '';
+    let newInputValue = '';
+
+    if (userDate) {
+      newDate = userDate.toISOString();
+      newInputValue = humanizePointDateTime(newDate);
+    }
+
+    this.#dateToInputElement.value = newInputValue;
+    this.updateElement({dateTo: newDate});
     this.#datepickerFrom.set('maxDate', this._state.dateTo);
   };
 
   #setDatepicker() {
-    const [dateFromInputElement, dateToInputElement] = this.element.querySelectorAll('.event__input--time');
+    [this.#dateFromInputElement, this.#dateToInputElement] = this.element.querySelectorAll('.event__input--time');
 
     const config = {
       dateFormat: 'd/m/y H:i',
@@ -326,7 +385,7 @@ export default class PointFormView extends AbstractStatefulView {
     };
 
     this.#datepickerFrom = flatpickr(
-      dateFromInputElement,
+      this.#dateFromInputElement,
       {
         ...config,
         defaultDate: this._state.dateFrom,
@@ -336,7 +395,7 @@ export default class PointFormView extends AbstractStatefulView {
     );
 
     this.#datepickerTo = flatpickr(
-      dateToInputElement,
+      this.#dateToInputElement,
       {
         ...config,
         defaultDate: this._state.dateTo,

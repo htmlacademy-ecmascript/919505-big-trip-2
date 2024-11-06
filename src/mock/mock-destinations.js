@@ -58,7 +58,7 @@ const mockDestinations = [
   {
     id: '5',
     name: 'Madrid',
-    description: 'Столица Испании',
+    description: '',
     pictures: []
   },
 
