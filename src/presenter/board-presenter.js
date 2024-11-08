@@ -6,9 +6,11 @@ import PointSortingPanelView from '../view/point-sorting-panel-view';
 import PointListView from '../view/point-list-view';
 import NoPointsView from '../view/no-points-view';
 import PointPresenter from './point-presenter';
+import LoadingView from '../view/loading-view';
 
 export default class BoardPresenter {
   #pointListComponent = new PointListView();
+  #loadingComponent = new LoadingView();
   #noPointsComponent = null;
 
   #boardContainer = null;
@@ -22,6 +24,8 @@ export default class BoardPresenter {
 
   #pointPresenters = new Map();
   #currentlyOpenedFormId = null;
+
+  #isLoading = true;
 
   constructor({boardContainer, addPointElement, pointsModel, filterModel}) {
     this.#boardContainer = boardContainer;
@@ -68,6 +72,11 @@ export default class BoardPresenter {
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
   };
 
@@ -76,6 +85,11 @@ export default class BoardPresenter {
   // Рендерит доску
   #renderBoard() {
     const points = this.points;
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
 
     // Ставим заглушку, если нет точек для отрисовки
     if (points.length === 0) {
@@ -126,6 +140,10 @@ export default class BoardPresenter {
     }
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#boardContainer);
+  }
+
   // Рендерит заглушку при отсутствии точек
   #renderNoPointsMessage() {
     this.#noPointsComponent = new NoPointsView({currentFilter: this.#filterModel.currentFilter});
@@ -135,6 +153,7 @@ export default class BoardPresenter {
   // Очищает доску
   #clearBoard({resetSortType = false} = {}) {
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
     this.#clearPoints();
 
     if (this.#noPointsComponent) {
