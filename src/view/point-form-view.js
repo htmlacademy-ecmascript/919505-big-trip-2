@@ -322,7 +322,7 @@ export default class PointFormView extends AbstractStatefulView {
     this._setState({basePrice: parseInt(newValue, 10)});
 
 
-    this.element.querySelector('.event__available-offers')?.addEventListener('change', (innerEvent) => {
+    this.element.querySelector('.event__available-offers')?.addEventListener('change', () => {
       this.updateElement(this._state);
     }, {once: true});
   };
