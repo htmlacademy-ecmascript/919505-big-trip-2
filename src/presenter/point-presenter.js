@@ -108,7 +108,11 @@ export default class PointPresenter {
       });
     };
 
-    this.#pointFormComponent.shake(resetFormState);
+    if (this.#mode === Mode.EDITING) {
+      this.#pointFormComponent.shake(resetFormState);
+    } else {
+      this.#pointComponent.shake();
+    }
   }
 
   // ============= ЭКЗЕМПЛЯРЫ КАРТОЧКИ И ФОРМЫ =============
