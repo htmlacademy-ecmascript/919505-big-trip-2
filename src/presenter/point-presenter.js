@@ -43,6 +43,7 @@ export default class PointPresenter {
     this.#pointFormComponent = this.#createPointFormView();
 
     if (this.#point === BLANK_POINT) {
+      this.#mode = Mode.EDITING;
       render(this.#pointFormComponent, this.#pointContainerElement, RenderPosition.AFTERBEGIN);
       document.addEventListener('keydown', this.#escKeyDownHandler);
       return;
