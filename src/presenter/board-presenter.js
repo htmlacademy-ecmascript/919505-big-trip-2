@@ -2,11 +2,17 @@ import {SortType, FilterType, UpdateType, UserAction, BLANK_POINT} from '../cons
 import {pointsFilter} from '../utils/filter';
 import {pointsSort} from '../utils/sort';
 import {render, remove, RenderPosition} from '../framework/render';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
 import PointSortingPanelView from '../view/point-sorting-panel-view';
 import PointListView from '../view/point-list-view';
 import NoPointsView from '../view/no-points-view';
 import PointPresenter from './point-presenter';
 import LoadingView from '../view/loading-view';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class BoardPresenter {
   #pointListComponent = new PointListView();
@@ -26,6 +32,10 @@ export default class BoardPresenter {
   #currentlyOpenedFormId = null;
 
   #isLoading = true;
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
   constructor({boardContainer, addPointElement, pointsModel, filterModel}) {
     this.#boardContainer = boardContainer;
@@ -173,18 +183,39 @@ export default class BoardPresenter {
 
   // ============= КОЛЛБЭКИ ДЛЯ ТОЧЕК =============
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
+
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#pointPresenters.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
+
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   // Проверяет, не открыта ли в данный момент форма у другой карточки

@@ -58,7 +58,9 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointFormComponent, prevPointFormComponent);
+      //replace(this.#pointFormComponent, prevPointFormComponent);
+      replace(this.#pointComponent, prevPointFormComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -79,6 +81,34 @@ export default class PointPresenter {
     if (this.#mode !== Mode.DEFAULT) {
       this.#replaceFormToCard();
     }
+  }
+
+  setSaving() {
+    this.#pointFormComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointFormComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#pointFormComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointFormComponent.shake(resetFormState);
   }
 
   // ============= ЭКЗЕМПЛЯРЫ КАРТОЧКИ И ФОРМЫ =============
@@ -181,8 +211,6 @@ export default class PointPresenter {
   }
 
   #handleFormSubmit = (updatedPoint) => {
-    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
-    // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление
     const isMinorUpdate = !isDatesEqual(this.#point.dateFrom, updatedPoint.dateFrom) ||
       this.#point.basePrice !== updatedPoint.basePrice || updatedPoint.id === BLANK_POINT.id;
 
@@ -195,6 +223,6 @@ export default class PointPresenter {
     }
 
     this.#handleDataChange(userAction, isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH, updatedPoint);
-    this.#replaceFormToCard();
+    //this.#replaceFormToCard();
   };
 }
