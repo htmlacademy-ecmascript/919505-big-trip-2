@@ -111,13 +111,6 @@ function getMinMaxDates(points) {
 function humanizeTripTimeInterval(points) {
   const {dateFrom, dateTo} = getMinMaxDates(points);
 
-  const monthFrom = dayjs(dateFrom).format(DateFormat.MMM);
-  const monthTo = dayjs(dateTo).format(DateFormat.MMM);
-
-  if (monthFrom === monthTo) {
-    return `${dayjs(dateFrom).format(DateFormat.D)}&nbsp;&mdash;&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
-  }
-
   return `${dayjs(dateFrom).format(DateFormat.DD_MMM)}&nbsp;&mdash;&nbsp;${dayjs(dateTo).format(DateFormat.DD_MMM)}`;
 }
 

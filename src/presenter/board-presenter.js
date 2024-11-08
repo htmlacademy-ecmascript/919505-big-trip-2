@@ -2,11 +2,17 @@ import {SortType, FilterType, UpdateType, UserAction, BLANK_POINT} from '../cons
 import {pointsFilter} from '../utils/filter';
 import {pointsSort} from '../utils/sort';
 import {render, remove, RenderPosition} from '../framework/render';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
 import PointSortingPanelView from '../view/point-sorting-panel-view';
 import PointListView from '../view/point-list-view';
 import NoPointsView from '../view/no-points-view';
 import PointPresenter from './point-presenter';
 import LoadingView from '../view/loading-view';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class BoardPresenter {
   #pointListComponent = new PointListView();
@@ -26,6 +32,10 @@ export default class BoardPresenter {
   #currentlyOpenedFormId = null;
 
   #isLoading = true;
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
   constructor({boardContainer, addPointElement, pointsModel, filterModel}) {
     this.#boardContainer = boardContainer;
@@ -91,8 +101,8 @@ export default class BoardPresenter {
       return;
     }
 
-    // Ставим заглушку, если нет точек для отрисовки
-    if (points.length === 0) {
+    // Ставим заглушку, если нет точек для отрисовки или получили ошибку при получении данных с бэка
+    if (points.length === 0 || this.#pointsModel.isApiError) {
       this.#renderNoPointsMessage();
       return;
     }
@@ -146,7 +156,7 @@ export default class BoardPresenter {
 
   // Рендерит заглушку при отсутствии точек
   #renderNoPointsMessage() {
-    this.#noPointsComponent = new NoPointsView({currentFilter: this.#filterModel.currentFilter});
+    this.#noPointsComponent = new NoPointsView({currentFilter: this.#filterModel.currentFilter, isApiError: this.#pointsModel.isApiError});
     render(this.#noPointsComponent, this.#boardContainer);
   }
 
@@ -163,6 +173,8 @@ export default class BoardPresenter {
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
     }
+
+    this.#currentlyOpenedFormId = null;
   }
 
   // Удаляет все точки
@@ -173,18 +185,39 @@ export default class BoardPresenter {
 
   // ============= КОЛЛБЭКИ ДЛЯ ТОЧЕК =============
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
+
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#pointPresenters.get(BLANK_POINT.id).setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenters.get(BLANK_POINT.id).setAborting();
+        }
         break;
+
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   // Проверяет, не открыта ли в данный момент форма у другой карточки
