@@ -101,8 +101,8 @@ export default class BoardPresenter {
       return;
     }
 
-    // Ставим заглушку, если нет точек для отрисовки
-    if (points.length === 0) {
+    // Ставим заглушку, если нет точек для отрисовки или получили ошибку при получении данных с бэка
+    if (points.length === 0 || this.#pointsModel.isApiError) {
       this.#renderNoPointsMessage();
       return;
     }
@@ -156,7 +156,7 @@ export default class BoardPresenter {
 
   // Рендерит заглушку при отсутствии точек
   #renderNoPointsMessage() {
-    this.#noPointsComponent = new NoPointsView({currentFilter: this.#filterModel.currentFilter});
+    this.#noPointsComponent = new NoPointsView({currentFilter: this.#filterModel.currentFilter, isApiError: this.#pointsModel.isApiError});
     render(this.#noPointsComponent, this.#boardContainer);
   }
 
@@ -173,6 +173,8 @@ export default class BoardPresenter {
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
     }
+
+    this.#currentlyOpenedFormId = null;
   }
 
   // Удаляет все точки
@@ -197,11 +199,11 @@ export default class BoardPresenter {
         break;
 
       case UserAction.ADD_POINT:
-        this.#pointPresenters.get(update.id).setSaving();
+        this.#pointPresenters.get(BLANK_POINT.id).setSaving();
         try {
           await this.#pointsModel.addPoint(updateType, update);
         } catch(err) {
-          this.#pointPresenters.get(update.id).setAborting();
+          this.#pointPresenters.get(BLANK_POINT.id).setAborting();
         }
         break;
 

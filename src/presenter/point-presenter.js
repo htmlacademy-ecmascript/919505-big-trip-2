@@ -157,6 +157,7 @@ export default class PointPresenter {
   }
 
   #replaceFormToCard() {
+    this.#pointFormComponent.reset(this.#point);
     replace(this.#pointComponent, this.#pointFormComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#handleFormClose();
@@ -201,8 +202,8 @@ export default class PointPresenter {
       return;
     }
 
+    this.#handleFormClose();
     this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, this.#point);
-    this.#replaceFormToCard();
   };
 
   #destroyNewPointForm() {
@@ -223,6 +224,5 @@ export default class PointPresenter {
     }
 
     this.#handleDataChange(userAction, isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH, updatedPoint);
-    //this.#replaceFormToCard();
   };
 }

@@ -7,6 +7,8 @@ export default class PointsModel extends Observable {
   #destinations = [];
   #offers = [];
 
+  #isApiError = false;
+
   constructor({tripApiService}) {
     super();
     this.#tripApiService = tripApiService;
@@ -26,6 +28,10 @@ export default class PointsModel extends Observable {
 
   get offers() {
     return this.#offers;
+  }
+
+  get isApiError() {
+    return this.#isApiError;
   }
 
   async updatePoint(updateType, update) {
@@ -97,18 +103,21 @@ export default class PointsModel extends Observable {
       this.#points = points.map(this.#adaptPointToClient);
     } catch(err) {
       this.#points = [];
+      this.#isApiError = true;
     }
 
     try {
       this.#destinations = await this.#tripApiService.destinations;
     } catch(err) {
       this.#destinations = [];
+      this.#isApiError = true;
     }
 
     try {
       this.#offers = await this.#tripApiService.offers;
     } catch(err) {
       this.#offers = [];
+      this.#isApiError = true;
     }
 
     this._notify(UpdateType.INIT);

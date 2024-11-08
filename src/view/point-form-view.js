@@ -319,7 +319,12 @@ export default class PointFormView extends AbstractStatefulView {
   #pointPriceChangeHandler = (evt) => {
     const isPriceValid = REG_EXP_ANY_POSITIVE_NUMBER.test(evt.target.value);
     const newValue = isPriceValid ? evt.target.value : DEFAULT_PRICE;
-    this.updateElement({basePrice: parseInt(newValue, 10)});
+    this._setState({basePrice: parseInt(newValue, 10)});
+
+
+    this.element.querySelector('.event__available-offers')?.addEventListener('change', (innerEvent) => {
+      this.updateElement(this._state);
+    }, {once: true});
   };
 
   #pointOfferChangeHandler = (evt) => {
