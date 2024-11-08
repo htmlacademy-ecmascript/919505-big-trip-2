@@ -189,8 +189,8 @@ export default class PointPresenter {
     let userAction = UserAction.UPDATE_POINT;
 
     if (updatedPoint.id === BLANK_POINT.id) {
-      updatedPoint.id = Math.ceil(Math.random() * 10000 + 54).toString();
       userAction = UserAction.ADD_POINT;
+      delete updatedPoint.id;
       this.#addPointElement.disabled = false;
     }
 

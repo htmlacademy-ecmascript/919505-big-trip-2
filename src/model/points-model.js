@@ -28,32 +28,50 @@ export default class PointsModel extends Observable {
     return this.#offers;
   }
 
-  updatePoint(updateType, updatedPoint) {
-    const updatedPointIndex = this.#points.findIndex((point) => point.id === updatedPoint.id);
+  async updatePoint(updateType, update) {
+    const updatedPointIndex = this.#points.findIndex((point) => point.id === update.id);
 
     if (updatedPointIndex === -1) {
       throw new Error('Can\'t update point that does not exist');
     }
 
-    this.#points = [...this.#points.slice(0, updatedPointIndex), updatedPoint, ...this.#points.slice(updatedPointIndex + 1)];
-    this._notify(updateType, updatedPoint);
+    try {
+      const response = await this.#tripApiService.updatePoint(update);
+      const updatedPoint = this.#adaptPointToClient(response);
+
+      this.#points = [...this.#points.slice(0, updatedPointIndex), updatedPoint, ...this.#points.slice(updatedPointIndex + 1),];
+      this._notify(updateType, updatedPoint);
+    } catch(err) {
+      throw new Error('Can\'t update point');
+    }
   }
 
-  addPoint(updateType, newPoint) {
-    this.#points = [newPoint, ...this.#points];
-    this._notify(updateType, newPoint);
+  async addPoint(updateType, update) {
+    try {
+      const response = await this.#tripApiService.addPoint(update);
+      const newPoint = this.#adaptPointToClient(response);
+
+      this.#points = [newPoint, ...this.#points];
+      this._notify(updateType, newPoint);
+    } catch(err) {
+      throw new Error('Can\'t add point');
+    }
   }
 
-  deletePoint(updateType, deletedPoint) {
-    const deletedPointIndex = this.#points.findIndex((task) => task.id === deletedPoint.id);
+  async deletePoint(updateType, update) {
+    const deletedPointIndex = this.#points.findIndex((point) => point.id === update.id);
 
     if (deletedPointIndex === -1) {
       throw new Error('Can\'t delete point that does not exist');
     }
 
-    this.#points = [...this.#points.slice(0, deletedPointIndex), ...this.#points.slice(deletedPointIndex + 1)];
-
-    this._notify(updateType);
+    try {
+      await this.#tripApiService.deletePoint(update);
+      this.#points = [...this.#points.slice(0, deletedPointIndex), ...this.#points.slice(deletedPointIndex + 1)];
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete point');
+    }
   }
 
   getDestinationById(id) {
