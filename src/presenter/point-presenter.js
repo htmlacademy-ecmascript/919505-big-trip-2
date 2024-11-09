@@ -103,11 +103,13 @@ export default class PointPresenter {
 
   setAborting() {
     const resetFormState = () => {
-      this.#pointFormComponent.updateElement({
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false,
-      });
+      if (this.#mode === Mode.EDITING) {
+        this.#pointFormComponent.updateElement({
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false,
+        });
+      }
     };
 
     if (this.#mode === Mode.EDITING) {
@@ -179,7 +181,6 @@ export default class PointPresenter {
         return;
       }
 
-      this.#pointFormComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   };
@@ -197,7 +198,6 @@ export default class PointPresenter {
   // ============= КОЛЛБЭКИ ДЛЯ ФОРМЫ =============
 
   #handleCloseFormButton = () => {
-    this.#pointFormComponent.reset(this.#point);
     this.#replaceFormToCard();
   };
 
