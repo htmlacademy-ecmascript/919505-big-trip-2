@@ -3,15 +3,18 @@ import {UpdateType} from '../const.js';
 
 export default class PointsModel extends Observable {
   #tripApiService = null;
+  #handleError = () => {};
+
   #points = [];
   #destinations = [];
   #offers = [];
 
   #isApiError = false;
 
-  constructor({tripApiService}) {
+  constructor({tripApiService, onError}) {
     super();
     this.#tripApiService = tripApiService;
+    this.#handleError = onError;
   }
 
   get points() {
@@ -104,6 +107,7 @@ export default class PointsModel extends Observable {
     } catch(err) {
       this.#points = [];
       this.#isApiError = true;
+      this.#handleError();
     }
 
     try {
@@ -111,6 +115,7 @@ export default class PointsModel extends Observable {
     } catch(err) {
       this.#destinations = [];
       this.#isApiError = true;
+      this.#handleError();
     }
 
     try {
@@ -118,6 +123,7 @@ export default class PointsModel extends Observable {
     } catch(err) {
       this.#offers = [];
       this.#isApiError = true;
+      this.#handleError();
     }
 
     this._notify(UpdateType.INIT);
