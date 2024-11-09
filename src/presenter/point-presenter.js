@@ -207,8 +207,7 @@ export default class PointPresenter {
       this.#handleFormClose();
       return;
     }
-
-    this.#handleFormClose();
+    
     this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, this.#point);
   };
 
