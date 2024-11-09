@@ -211,7 +211,6 @@ export default class BoardPresenter {
         this.#pointPresenters.get(update.id).setDeleting();
         try {
           await this.#pointsModel.deletePoint(updateType, update);
-          this.#handleFormClose();
         } catch(err) {
           this.#pointPresenters.get(update.id).setAborting();
         }
