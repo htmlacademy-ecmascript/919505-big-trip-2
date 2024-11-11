@@ -20,6 +20,7 @@ export default class PointPresenter {
   #point = null;
   #pointComponent = null;
   #pointFormComponent = null;
+  #isEscKeyDownHandlerActive = false;
 
   #mode = Mode.DEFAULT;
 
@@ -70,6 +71,11 @@ export default class PointPresenter {
   destroy() {
     remove(this.#pointComponent);
     remove(this.#pointFormComponent);
+
+    if (this.#isEscKeyDownHandlerActive) {
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
+      this.#isEscKeyDownHandlerActive = false;
+    }
   }
 
   resetView() {
@@ -84,10 +90,12 @@ export default class PointPresenter {
   }
 
   setSaving() {
-    this.#pointFormComponent.updateElement({
-      isDisabled: true,
-      isSaving: true,
-    });
+    if (this.#mode === Mode.EDITING) {
+      this.#pointFormComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
   }
 
   setDeleting() {
@@ -101,11 +109,13 @@ export default class PointPresenter {
 
   setAborting() {
     const resetFormState = () => {
-      this.#pointFormComponent.updateElement({
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false,
-      });
+      if (this.#mode === Mode.EDITING) {
+        this.#pointFormComponent.updateElement({
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false,
+        });
+      }
     };
 
     if (this.#mode === Mode.EDITING) {
@@ -156,6 +166,7 @@ export default class PointPresenter {
   #replaceCardToForm(pointId) {
     replace(this.#pointFormComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#isEscKeyDownHandlerActive = true;
     this.#handleFormOpen(pointId);
     this.#mode = Mode.EDITING;
   }
@@ -164,6 +175,7 @@ export default class PointPresenter {
     this.#pointFormComponent.reset(this.#point);
     replace(this.#pointComponent, this.#pointFormComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#isEscKeyDownHandlerActive = false;
     this.#handleFormClose();
     this.#mode = Mode.DEFAULT;
   }
@@ -177,7 +189,6 @@ export default class PointPresenter {
         return;
       }
 
-      this.#pointFormComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   };
@@ -195,7 +206,6 @@ export default class PointPresenter {
   // ============= КОЛЛБЭКИ ДЛЯ ФОРМЫ =============
 
   #handleCloseFormButton = () => {
-    this.#pointFormComponent.reset(this.#point);
     this.#replaceFormToCard();
   };
 
@@ -206,7 +216,6 @@ export default class PointPresenter {
       return;
     }
 
-    this.#handleFormClose();
     this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, this.#point);
   };
 

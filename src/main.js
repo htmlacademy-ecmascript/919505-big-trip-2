@@ -11,7 +11,8 @@ const AUTHORIZATION = `Basic ${nanoid()}`;
 const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
 
 const pointsModel = new PointsModel({
-  tripApiService: new TripApiService(END_POINT, AUTHORIZATION)
+  tripApiService: new TripApiService(END_POINT, AUTHORIZATION),
+  onError: blockAddPointElement
 });
 const filterModel = new FilterModel();
 
@@ -40,6 +41,10 @@ const boardPresenter = new BoardPresenter({
   pointsModel,
   filterModel
 });
+
+function blockAddPointElement() {
+  addPointElement.disabled = true;
+}
 
 tripInfoPresenter.init();
 pointFilterPresenter.init();

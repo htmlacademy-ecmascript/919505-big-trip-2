@@ -32,14 +32,6 @@ function humanizePointHours(pointDate) {
   return pointDate ? `${dayjs(pointDate).format(DateFormat.HH)}:${dayjs(pointDate).format(DateFormat.MM)}` : '';
 }
 
-function humanizePointDateTime(pointDateTime) {
-  const humanizedDate = dayjs(pointDateTime).format(DateFormat.YY_MM_DD);
-  const humanizedHours = dayjs(pointDateTime).format(DateFormat.HH);
-  const humanizedMinutes = dayjs(pointDateTime).format(DateFormat.MM);
-
-  return `${humanizedDate}&nbsp;${humanizedHours}:${humanizedMinutes}`;
-}
-
 function humanizeTimeDifference(dateFrom, dateTo) {
   let difference = '';
   const start = dayjs(dateFrom);
@@ -122,7 +114,6 @@ export {
   humanizePointDate,
   humanizePointHours,
   humanizeTimeDifference,
-  humanizePointDateTime,
   humanizeTripTimeInterval,
   getMinMaxDates,
   isDatesEqual,

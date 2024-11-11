@@ -1,3 +1,5 @@
+const REG_EXP_ANY_NUMBER = /^[0-9]*$/;
+
 const REG_EXP_ANY_POSITIVE_NUMBER = /^[1-9][0-9]*$/;
 
 const KeyCode = {
@@ -45,4 +47,4 @@ const BLANK_POINT = {
   offers: []
 };
 
-export {REG_EXP_ANY_POSITIVE_NUMBER, KeyCode, UserAction, UpdateType, SortType, FilterType, POINT_TYPES, BLANK_POINT};
+export {REG_EXP_ANY_NUMBER, REG_EXP_ANY_POSITIVE_NUMBER, KeyCode, UserAction, UpdateType, SortType, FilterType, POINT_TYPES, BLANK_POINT};

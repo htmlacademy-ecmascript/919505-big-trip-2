@@ -1,6 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import {humanizePointDateTime} from '../utils/dates';
-import {BLANK_POINT, POINT_TYPES, REG_EXP_ANY_POSITIVE_NUMBER} from '../const';
+import {BLANK_POINT, POINT_TYPES, REG_EXP_ANY_NUMBER, REG_EXP_ANY_POSITIVE_NUMBER} from '../const';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
@@ -11,7 +10,8 @@ const ResetButtonTitle = {
   DELETING: 'Deleting...'
 };
 
-const DEFAULT_PRICE = '0';
+const DEFAULT_PRICE = 0;
+const ZERO_STRING = '0';
 
 function createPointTypeItem(pointId, pointType, currentPointType, isDisabled) {
   const isChecked = pointType === currentPointType ? 'checked' : '';
@@ -206,10 +206,10 @@ function createPointFormTemplate(state, offers, destinations) {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${id}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dateFrom === '' ? '' : humanizePointDateTime(dateFrom)}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dateFrom === '' ? '' : dateFrom}" ${isDisabled ? 'disabled' : ''}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-${id}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dateTo === '' ? '' : humanizePointDateTime(dateTo)}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dateTo === '' ? '' : dateTo}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -271,8 +271,10 @@ export default class PointFormView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#closeButtonClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('input', this.#pointDestinationChangeHandler);
-    this.element.querySelector('.event__input--price').addEventListener('change', this.#pointPriceChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('input', this.#pointDestinationInputHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('blur', this.#pointDestinationBlurHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#pointPriceInputHandler);
+    this.element.querySelector('.event__input--price').addEventListener('blur', this.#pointPriceBlurHandler);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#pointOfferChangeHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deletePointClickHandler);
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
@@ -299,32 +301,40 @@ export default class PointFormView extends AbstractStatefulView {
     this.updateElement({type: evt.target.value, offers: []});
   };
 
-  #pointDestinationChangeHandler = (evt) => {
-    const value = evt.target.value;
-    const newDestination = this.#destinations.find((destination) => destination.name === value);
+  #pointDestinationInputHandler = (evt) => {
+    const newDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
 
     if (newDestination) {
-      this._setState({destination: newDestination ? newDestination.id : this._state.destination});
-
-      this.element.addEventListener('click', (innerEvent) => {
-        if (innerEvent.target.type !== 'submit' && this.element.parentElement) {
-          this.updateElement(this._state);
-        }
-      }, {once: true});
-    } else {
-      evt.target.setCustomValidity('Пожалуйста, выберите значение из списка');
+      this.updateElement({destination: newDestination ? newDestination.id : this._state.destination});
     }
   };
 
-  #pointPriceChangeHandler = (evt) => {
-    const isPriceValid = REG_EXP_ANY_POSITIVE_NUMBER.test(evt.target.value);
-    const newValue = isPriceValid ? evt.target.value : DEFAULT_PRICE;
-    this._setState({basePrice: parseInt(newValue, 10)});
+  #pointDestinationBlurHandler = (evt) => {
+    const currentDestinationObject = this.#destinations.find((destination) => destination.id === this._state.destination);
+    evt.target.value = currentDestinationObject ? currentDestinationObject.name : '';
+  };
 
+  #pointPriceInputHandler = (evt) => {
+    const isPriceValid = REG_EXP_ANY_NUMBER.test(evt.target.value);
 
-    this.element.querySelector('.event__available-offers')?.addEventListener('change', () => {
-      this.updateElement(this._state);
-    }, {once: true});
+    if (isPriceValid) {
+      if (evt.target.value[0] === ZERO_STRING) {
+        evt.target.value = evt.target.value.slice(1);
+      }
+      this._setState({basePrice: evt.target.value ? parseInt(evt.target.value, 10) : null});
+      evt.target.value = evt.target.value ? this._state.basePrice : '';
+    } else {
+      evt.target.value = this._state.basePrice;
+    }
+  };
+
+  #pointPriceBlurHandler = (evt) => {
+    const isValueEmpty = evt.target.value === '';
+
+    if (isValueEmpty) {
+      this._setState({basePrice: DEFAULT_PRICE});
+      evt.target.value = ZERO_STRING;
+    }
   };
 
   #pointOfferChangeHandler = (evt) => {
@@ -352,13 +362,7 @@ export default class PointFormView extends AbstractStatefulView {
     const isDateFromValid = this.#dateFromInputElement.value !== '';
     const isDateToValid = this.#dateToInputElement.value !== '';
 
-    if (!isDateFromValid || !isDateToValid) {
-      return;
-    }
-
-    if (!isPriceValid) {
-      priceInputElement.setCustomValidity('Введите целое положительное число');
-      priceInputElement.reportValidity();
+    if (!isDateFromValid || !isDateToValid || !isPriceValid) {
       return;
     }
 
@@ -366,30 +370,16 @@ export default class PointFormView extends AbstractStatefulView {
   };
 
   #dateFromChangeHandler = ([userDate]) => {
-    let newDate = '';
-    let newInputValue = '';
+    const newDate = userDate.toISOString();
 
-    if (userDate) {
-      newDate = userDate.toISOString();
-      newInputValue = humanizePointDateTime(newDate);
-    }
-
-    this.#dateFromInputElement.value = newInputValue;
-    this.updateElement({dateFrom: newDate});
+    this._setState({dateFrom: newDate});
     this.#datepickerTo.set('minDate', this._state.dateFrom);
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    let newDate = '';
-    let newInputValue = '';
+    const newDate = userDate.toISOString();
 
-    if (userDate) {
-      newDate = userDate.toISOString();
-      newInputValue = humanizePointDateTime(newDate);
-    }
-
-    this.#dateToInputElement.value = newInputValue;
-    this.updateElement({dateTo: newDate});
+    this._setState({dateTo: newDate});
     this.#datepickerFrom.set('maxDate', this._state.dateTo);
   };
 
@@ -408,7 +398,7 @@ export default class PointFormView extends AbstractStatefulView {
       {
         ...config,
         defaultDate: this._state.dateFrom,
-        onClose: this.#dateFromChangeHandler,
+        onChange: this.#dateFromChangeHandler,
         maxDate: this._state.dateTo
       },
     );
@@ -418,7 +408,7 @@ export default class PointFormView extends AbstractStatefulView {
       {
         ...config,
         defaultDate: this._state.dateTo,
-        onClose: this.#dateToChangeHandler,
+        onChange: this.#dateToChangeHandler,
         minDate: this._state.dateFrom
       },
     );
