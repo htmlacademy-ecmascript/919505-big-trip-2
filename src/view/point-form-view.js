@@ -271,7 +271,8 @@ export default class PointFormView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#closeButtonClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('input', this.#pointDestinationChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('input', this.#pointDestinationInputHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('blur', this.#pointDestinationBlurHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#pointPriceChangeHandler);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#pointOfferChangeHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deletePointClickHandler);
@@ -299,21 +300,17 @@ export default class PointFormView extends AbstractStatefulView {
     this.updateElement({type: evt.target.value, offers: []});
   };
 
-  #pointDestinationChangeHandler = (evt) => {
+  #pointDestinationInputHandler = (evt) => {
     const value = evt.target.value;
     const newDestination = this.#destinations.find((destination) => destination.name === value);
 
     if (newDestination) {
-      this._setState({destination: newDestination ? newDestination.id : this._state.destination});
-
-      this.element.addEventListener('click', (innerEvent) => {
-        if (innerEvent.target.type !== 'submit' && this.element.parentElement) {
-          this.updateElement(this._state);
-        }
-      }, {once: true});
-    } else {
-      evt.target.setCustomValidity('Пожалуйста, выберите значение из списка');
+      this.updateElement({destination: newDestination ? newDestination.id : this._state.destination});
     }
+  };
+
+  #pointDestinationBlurHandler = (evt) => {
+    evt.target.value = this.#destinations.find((destination) => destination.id === this._state.destination).name;
   };
 
   #pointPriceChangeHandler = (evt) => {
