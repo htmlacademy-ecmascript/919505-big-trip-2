@@ -323,6 +323,8 @@ export default class PointFormView extends AbstractStatefulView {
       }
       this._setState({basePrice: evt.target.value ? parseInt(evt.target.value, 10) : null});
       evt.target.value = evt.target.value ? this._state.basePrice : '';
+    } else {
+      evt.target.value = this._state.basePrice;
     }
   };
 
