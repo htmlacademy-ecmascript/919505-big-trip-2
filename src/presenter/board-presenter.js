@@ -202,7 +202,9 @@ export default class BoardPresenter {
         this.#pointPresenters.get(BLANK_POINT.id).setSaving();
         try {
           await this.#pointsModel.addPoint(updateType, update);
+          this.#addPointElement.disabled = false;
         } catch(err) {
+          this.#addPointElement.disabled = true;
           this.#pointPresenters.get(BLANK_POINT.id).setAborting();
         }
         break;

@@ -10,12 +10,6 @@ import {nanoid} from 'nanoid';
 const AUTHORIZATION = `Basic ${nanoid()}`;
 const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
 
-const pointsModel = new PointsModel({
-  tripApiService: new TripApiService(END_POINT, AUTHORIZATION),
-  onError: blockAddPointElement
-});
-const filterModel = new FilterModel();
-
 const headerElement = document.querySelector('.page-header');
 const boardContainerElement = document.querySelector('.trip-events');
 
@@ -23,6 +17,12 @@ const tripInfoContainerElement = headerElement.querySelector('.trip-main');
 const pointFilterContainerElement = headerElement.querySelector('.trip-controls__filters');
 
 const addPointElement = headerElement.querySelector('.trip-main__event-add-btn');
+
+const pointsModel = new PointsModel({
+  tripApiService: new TripApiService(END_POINT, AUTHORIZATION),
+  addPointElement
+});
+const filterModel = new FilterModel();
 
 const tripInfoPresenter = new TripInfoPresenter({
   tripInfoContainerElement: tripInfoContainerElement,
@@ -41,10 +41,6 @@ const boardPresenter = new BoardPresenter({
   pointsModel,
   filterModel
 });
-
-function blockAddPointElement() {
-  addPointElement.disabled = true;
-}
 
 tripInfoPresenter.init();
 pointFilterPresenter.init();
