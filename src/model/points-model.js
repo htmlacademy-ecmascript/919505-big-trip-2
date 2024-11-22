@@ -3,7 +3,7 @@ import {UpdateType} from '../const.js';
 
 export default class PointsModel extends Observable {
   #tripApiService = null;
-  #handleError = () => {};
+  #addPointElement = null;
 
   #points = [];
   #destinations = [];
@@ -11,10 +11,10 @@ export default class PointsModel extends Observable {
 
   #isApiError = false;
 
-  constructor({tripApiService, onError}) {
+  constructor({tripApiService, addPointElement}) {
     super();
     this.#tripApiService = tripApiService;
-    this.#handleError = onError;
+    this.#addPointElement = addPointElement;
   }
 
   get points() {
@@ -101,6 +101,8 @@ export default class PointsModel extends Observable {
   }
 
   async init() {
+    this.#addPointElement.disabled = true;
+
     try {
       const points = await this.#tripApiService.points;
 
@@ -113,9 +115,9 @@ export default class PointsModel extends Observable {
       this.#destinations = [];
       this.#offers = [];
       this.#isApiError = true;
-      this.#handleError();
     }
 
+    this.#addPointElement.disabled = false;
     this._notify(UpdateType.INIT);
   }
 
