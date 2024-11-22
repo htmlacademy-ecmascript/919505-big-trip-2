@@ -110,6 +110,8 @@ export default class PointsModel extends Observable {
       this.#destinations = await this.#tripApiService.destinations;
       this.#offers = await this.#tripApiService.offers;
 
+      this.#addPointElement.disabled = false;
+
     } catch(err) {
       this.#points = [];
       this.#destinations = [];
@@ -117,7 +119,6 @@ export default class PointsModel extends Observable {
       this.#isApiError = true;
     }
 
-    this.#addPointElement.disabled = false;
     this._notify(UpdateType.INIT);
   }
 

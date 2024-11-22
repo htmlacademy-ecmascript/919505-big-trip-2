@@ -233,7 +233,6 @@ export default class PointPresenter {
     if (updatedPoint.id === BLANK_POINT.id) {
       userAction = UserAction.ADD_POINT;
       delete updatedPoint.id;
-      this.#addPointElement.disabled = false;
     }
 
     this.#handleDataChange(userAction, isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH, updatedPoint);
