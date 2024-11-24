@@ -3,8 +3,8 @@ import {getMinMaxDates} from './dates';
 const DEFAULT_TRIP_VALUE = 0;
 
 const PointsQuantity = {
-  LOWER_QUANTITY: 1,
-  UPPER_QUANTITY: 3
+  LOWER: 1,
+  UPPER: 3
 };
 
 function getDestinationName (destinations, destinationId) {
@@ -18,7 +18,7 @@ function generateTitle (points, destinations) {
     return '';
   }
 
-  if (points.length === PointsQuantity.LOWER_QUANTITY) {
+  if (points.length === PointsQuantity.LOWER) {
     return getDestinationName(destinations, points[0].destination);
   }
 
@@ -29,7 +29,7 @@ function generateTitle (points, destinations) {
   const lastDestinationName = getDestinationName(destinations, lastPoint.destination);
 
 
-  if (points.length > PointsQuantity.UPPER_QUANTITY) {
+  if (points.length > PointsQuantity.UPPER) {
     return `${firstDestinationName}-...-${lastDestinationName}`;
   }
 
