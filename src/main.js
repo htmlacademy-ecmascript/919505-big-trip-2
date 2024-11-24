@@ -3,7 +3,7 @@ import BoardPresenter from './presenter/board-presenter';
 import PointFilterPresenter from './presenter/point-filter-presenter';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
-import TripApiService from './api.js';
+import TripApiService from './trip-api-service.js';
 import {nanoid} from 'nanoid';
 
 
