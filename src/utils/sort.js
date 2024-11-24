@@ -2,26 +2,26 @@ import dayjs from 'dayjs';
 import {SortType} from '../const';
 
 const pointsSort = {
-  [SortType.DAY]: (a, b) => sortByDays(a, b),
-  [SortType.TIME]: (a, b) => sortByTime(a, b),
-  [SortType.PRICE]: (a, b) => b.basePrice - a.basePrice
+  [SortType.DAY]: (pointA, pointB) => sortByDays(pointA, pointB),
+  [SortType.TIME]: (pointA, pointB) => sortByTime(pointA, pointB),
+  [SortType.PRICE]: (pointA, pointB) => pointB.basePrice - pointA.basePrice
 };
 
-function sortByDays(a, b) {
-  return dayjs(a.dateFrom).isAfter(dayjs(b.dateFrom)) ? 1 : -1;
+function sortByDays(pointA, pointB) {
+  return dayjs(pointA.dateFrom).isAfter(dayjs(pointB.dateFrom)) ? 1 : -1;
 }
 
-function sortByTime(a, b) {
-  const start1 = dayjs(a.dateFrom);
-  const finish1 = dayjs(a.dateTo);
+function sortByTime(pointA, pointB) {
+  const startA = dayjs(pointA.dateFrom);
+  const finishA = dayjs(pointA.dateTo);
 
-  const start2 = dayjs(b.dateFrom);
-  const finish2 = dayjs(b.dateTo);
+  const startB = dayjs(pointB.dateFrom);
+  const finishB = dayjs(pointB.dateTo);
 
-  const differenceInMilliSeconds1 = finish1.diff(start1);
-  const differenceInMilliSeconds2 = finish2.diff(start2);
+  const differenceInMilliSecondsA = finishA.diff(startA);
+  const differenceInMilliSecondsB = finishB.diff(startB);
 
-  return differenceInMilliSeconds1 < differenceInMilliSeconds2 ? 1 : -1;
+  return differenceInMilliSecondsA < differenceInMilliSecondsB ? 1 : -1;
 }
 
 export {pointsSort};
