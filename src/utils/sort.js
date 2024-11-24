@@ -12,16 +12,16 @@ function sortByDays(pointA, pointB) {
 }
 
 function sortByTime(pointA, pointB) {
-  const start1 = dayjs(pointA.dateFrom);
-  const finish1 = dayjs(pointA.dateTo);
+  const startA = dayjs(pointA.dateFrom);
+  const finishA = dayjs(pointA.dateTo);
 
-  const start2 = dayjs(pointB.dateFrom);
-  const finish2 = dayjs(pointB.dateTo);
+  const startB = dayjs(pointB.dateFrom);
+  const finishB = dayjs(pointB.dateTo);
 
-  const differenceInMilliSeconds1 = finish1.diff(start1);
-  const differenceInMilliSeconds2 = finish2.diff(start2);
+  const differenceInMilliSecondsA = finishA.diff(startA);
+  const differenceInMilliSecondsB = finishB.diff(startB);
 
-  return differenceInMilliSeconds1 < differenceInMilliSeconds2 ? 1 : -1;
+  return differenceInMilliSecondsA < differenceInMilliSecondsB ? 1 : -1;
 }
 
 export {pointsSort};
